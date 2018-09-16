@@ -83,3 +83,4 @@ config.js
 # next.js build output
 .next
 
+.after_git.sh
