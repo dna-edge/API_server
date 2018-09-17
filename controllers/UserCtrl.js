@@ -8,14 +8,13 @@ let validationError = {
   errors:{}
 };
 
-
 /*******************
  *  Register
  *  @param: id, password, confirm_password, email, nickname, avatar, description
  *  TODO validation
  *  TODO 이미지 등록
  ********************/
-exports.register = async (req, res, next) => {   
+exports.register = async (req, res, next) => {
   /* PARAM */
   const id = req.body.id || req.params.id;
   const password = req.body.password || req.params.password;
@@ -24,12 +23,12 @@ exports.register = async (req, res, next) => {
   const avatar = req.body.avatar || req.params.avatar || null;
   const description = req.body.description || req.params.description || null;
   let nickname = req.body.nickname || req.params.nickname;
-  
+
 
   /* 1. 유효성 체크하기 */
   let validpassword;
   let isValid = true;
-  
+
   if (!id || validator.isEmpty(id)) {
     isValid = false;
     validationError.errors.id = { message : "ID is required" };
@@ -49,7 +48,7 @@ exports.register = async (req, res, next) => {
     isValid = false;
     validationError.errors.password = { message : "Password is required" };
   }
-  
+
   // 입력한 비밀번호가 서로 일치하는지 체크
   if (password !== confirm_password) {
     isValid = false;
@@ -133,14 +132,14 @@ exports.select = async (req, res, next) => {
     message : "Select User Successfully",
     result
   };
-  return res.status(200).json(respond);  
+  return res.status(200).json(respond);
 };
 
 
 
 /*******************
  *  Update
- *  @param: idx, password, new_password, 
+ *  @param: idx, password, new_password,
  *    confirm_password, nickname, avatar, description
  *  TODO 이미지 등록
  ********************/
@@ -165,7 +164,7 @@ exports.update = async (req, res, next) => {
     // 1. 새 비밀번호와 확인 비밀번호가 일치하는지 체크
     if (!confirmPassword || !validator.equals(newPassword, confirmPassword)) {
       isValid = false;
-      validationError.errors.password = { message : 'Passwords do not match' };    
+      validationError.errors.password = { message : 'Passwords do not match' };
     }
 
     // 2. 현재 비밀번호와 입력한 비밀번호가 같은지 체크
@@ -173,7 +172,7 @@ exports.update = async (req, res, next) => {
       id: req.userData.id,
       password
     }
-    
+
     if (isValid) {
       if (!password || validator.isEmpty(password)) {
         isValid = false;
@@ -183,7 +182,7 @@ exports.update = async (req, res, next) => {
         isValid = false;
         validationError.errors.idx = { message : 'Wrong Password' };
       }
-    }    
+    }
   }
 
   if (!isValid) return res.status(400).json(validationError);
@@ -214,5 +213,5 @@ exports.update = async (req, res, next) => {
     message : "Update User Successfully",
     result
   };
-  return res.status(201).json(respond);  
+  return res.status(201).json(respond);
 };
