@@ -13,17 +13,19 @@ const app = express();
 let server, corsOptions;
 switch(process.env.NODE_ENV){
   case 'development':    
+    process.env.socketServer = "http://localhost:9014/api";
     corsOptions = {
       origin: 'http://localhost:9012',
-      credentials : true
+      credentials : true  
     };
     app.use(cors(corsOptions));
     server = http.Server(app);    
     break;
 
   case 'production':
+    process.env.socketServer = "https://dna.soyoungpark.me:9014/api";
     corsOptions = {
-      origin: 'https://dna.soyoungpark.me',
+      origin: 'https://dna.soyoungpark.me:9012',
       credentials : true
     };
     app.use(cors(corsOptions));
