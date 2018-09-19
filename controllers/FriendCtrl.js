@@ -1,5 +1,5 @@
 const validator = require('validator');
-const axios = require('axios');
+var fetch = require("node-fetch");
 
 const friendModel = require('../models/FriendModel');
 const errorCode = require('../utils/error').code;
@@ -46,12 +46,12 @@ exports.add = async (req, res, next) => {
   console.log(result);
 
   /* 친구 추가 성공 시 채팅방을 개설해야 합니다 */
-  axios({
+  fetch(process.env.socketServer + "/room", {
     method: "POST",
-    url: process.env.socketServer + "/room",    
     headers: {"token": req.headers.token },
     withCredentials: true,
-    data: {
+    mode: 'no-cors',
+    body: {
       idx: result.idx,
       nickname: result.nickname,
       avatar: result.avatar

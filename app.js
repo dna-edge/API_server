@@ -23,9 +23,9 @@ switch(process.env.NODE_ENV){
     break;
 
   case 'production':
-    process.env.socketServer = "https://localhost:9014/api";
+    process.env.socketServer = "https://dna.soyoungpark.me:9015/api";
     corsOptions = {
-      origin: 'https://dna.soyoungpark.me',
+      origin: 'https://dna.soyoungpark.me:9012',
       credentials : true
     };
     app.use(cors(corsOptions));
