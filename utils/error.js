@@ -144,6 +144,20 @@ exports.code =
       code: 32400,
       message: "No Friend"
     }
+  },
+  33400: {
+    status: 400,
+    contents: {
+      code: 33400,
+      message: "No Request Exists"
+    }
+  },
+  34400: {
+    status: 400,
+    contents: {
+      code: 34400,
+        message: "Already sent request"
+    }
   }
 
 };
