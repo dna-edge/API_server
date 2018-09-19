@@ -43,38 +43,50 @@ exports.add = async (req, res, next) => {
     return res.json(errorCode[err]);
   }
 
-  console.log(result);
-
   /* 친구 추가 성공 시 채팅방을 개설해야 합니다 */
+  let response;
+  let status;
+
   fetch(process.env.socketServer + "/room", {
     method: "POST",
-    headers: {"token": req.headers.token },
-    withCredentials: true,
-    mode: 'no-cors',
-    body: {
+    body: JSON.stringify({
       idx: result.idx,
       nickname: result.nickname,
       avatar: result.avatar
-    }
+    }),
+    headers: {"token": req.headers.token, 'Content-Type': 'application/json' },
+    withCredentials: true,
+    mode: 'no-cors'
   })
-  .then((response) => {
-    /* 친구추가 성공 시 */
-    const respond = {
-      status: 200,
-      message : "Add Friend And Conversation Room is opened Successfully",
-      result
-    };
-    return res.status(200).json(respond);
+  .then((result) => {
+    if (result.status === 201) {
+      status = 201;
+    } else {
+      status = 500;
+    }
   })
   .catch((err) => {
     console.log(err);
-    /* 채팅방 개설 실패 */
-    const respond = {
-      status: 500,
-      message : "Failed to open new Conversation Room"
-    };
-    return res.status(500).json(respond);
-  });
+    status = 500;
+  })
+  .then(() => {
+    if (status === 500) {
+      /* 채팅방 개설 실패 */
+      response = {
+        status: 500,
+        message : "Failed to open new Conversation Room"
+      };
+    } else if (status === 201) {
+      /* 친구추가 성공 시 */
+      response = {
+        status: 201,
+        message : "Add Friend And Conversation Room is opened Successfully",
+        result
+      };
+    }
+  
+    return res.status(status).json(response);
+  }); 
 };
 
 /*******************
