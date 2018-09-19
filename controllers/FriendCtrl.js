@@ -1,4 +1,5 @@
 const validator = require('validator');
+const axios = require('axios');
 
 const friendModel = require('../models/FriendModel');
 const errorCode = require('../utils/error').code;
@@ -42,14 +43,38 @@ exports.add = async (req, res, next) => {
     return res.json(errorCode[err]);
   }
 
-  /* 친구추가 성공 시 */
-  const respond = {
-    status: 200,
-    message : "Add Friend Successfully",
-    result
-  };
-  return res.status(200).json(respond);
+  console.log(result);
 
+  /* 친구 추가 성공 시 채팅방을 개설해야 합니다 */
+  axios({
+    method: "POST",
+    // url: "https://dna.soyoungpark.me:9014/api/room",
+    url: "http://localhost:9014/api/room",
+    headers: {"token": req.headers.token },
+    data: {
+      idx: result.idx,
+      nickname: result.nickname,
+      avatar: result.avatar
+    }
+  })
+  .then((response) => {
+    /* 친구추가 성공 시 */
+    const respond = {
+      status: 200,
+      message : "Add Friend And Conversation Room is opened Successfully",
+      result
+    };
+    return res.status(200).json(respond);
+  })
+  .catch((err) => {
+    console.log(err);
+    /* 채팅방 개설 실패 */
+    const respond = {
+      status: 500,
+      message : "Failed to open new Conversation Room"
+    };
+    return res.status(500).json(respond);
+  });
 };
 
 /*******************

@@ -35,11 +35,29 @@ exports.add = (userIdx, receiverIdx) => {
             reject (err);
           } else {
             if (rows.affectedRows === 1) {
-              resolve(rows);
+              resolve();
             } else {
               reject(22500);
             }
           }
+      });
+    });
+  })
+  .then(() => {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT idx, nickname, avatar 
+                     FROM users 
+                    WHERE idx = ?`;
+      mysql.query(sql, receiverIdx, (err, rows) => {
+        if (err) {
+          reject (err);
+        } else {
+          if (rows.length > 0) {
+            resolve(rows[0]);
+          } else {
+            reject(20400);
+          }
+        }
       });
     });
   });
