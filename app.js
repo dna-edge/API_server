@@ -13,7 +13,7 @@ const app = express();
 let server, corsOptions;
 switch(process.env.NODE_ENV){
   case 'development':    
-    process.env.socketServer = "http://localhost:9014/api";
+    // process.env.socketServer = "http://localhost:9014/api";
     corsOptions = {
       origin: 'http://localhost:9012',
       credentials : true
@@ -23,7 +23,7 @@ switch(process.env.NODE_ENV){
     break;
 
   case 'production':
-    process.env.socketServer = "https://dna.soyoungpark.me:9014/api";
+    // process.env.socketServer = "https://localhost:9014/api";
     corsOptions = {
       origin: 'https://dna.soyoungpark.me',
       credentials : true

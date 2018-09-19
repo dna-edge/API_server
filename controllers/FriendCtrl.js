@@ -48,7 +48,8 @@ exports.add = async (req, res, next) => {
   /* 친구 추가 성공 시 채팅방을 개설해야 합니다 */
   axios({
     method: "POST",
-    url: process.env.socketServer + "/room",
+    // url: process.env.socketServer + "/room",
+    url: "http://localhost:9014/api/room",
     headers: {"token": req.headers.token },
     withCredentials: true,
     data: {
