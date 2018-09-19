@@ -7,7 +7,10 @@ module.exports = (router) => {
     .post(authCtrl.auth, friendCtrl.add);                  // 친구추가
 
   router.route('/friends/delete')
-    .post(friendCtrl.delete);             // 친구 삭제
+    .post(authCtrl.auth, friendCtrl.delete);             // 친구 삭제
+
+  router.route('/friends/show')
+    .post(authCtrl.auth, friendCtrl.show);             // 친구 조회
 
   return router;
 };

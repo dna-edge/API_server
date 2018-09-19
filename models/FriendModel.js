@@ -3,8 +3,8 @@ const redis = global.utils.redis;
 
 
 /*******************
- *  Register
- *  @param: userData = { idx, id, password, nickname, email, avatar, description }
+ *  Add
+ *  @param: userData = { idx }
  ********************/
 exports.add = (userIdx, receiverIdx) => {
   // 1. 친구여부 확인
@@ -18,7 +18,7 @@ exports.add = (userIdx, receiverIdx) => {
         reject(err);
       } else {
         if (rows.length !== 0) {
-          reject(21400);
+          reject(30400);
         } else {
           resolve(null);
         }
@@ -46,10 +46,10 @@ exports.add = (userIdx, receiverIdx) => {
 };
 
 /*******************
- *  Select
+ *  Delete
  *  @param: idx
  ********************/
-exports.delete = (idx) => {
+exports.delete = (userIdx,receiverIdx) => {
   // 1. 친구여부 확인
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
@@ -60,8 +60,8 @@ exports.delete = (idx) => {
       if (err) {
         reject(err);
       } else {
-        if (rows.length !== 0) {
-          reject(21400);
+        if (rows.length == 0) {
+          reject(31400);
         } else {
           resolve(null);
         }
@@ -84,6 +84,31 @@ exports.delete = (idx) => {
             }
           }
       });
+    });
+  });
+};
+
+/*******************
+ *  Show
+ *  @param: idx
+ ********************/
+exports.show = (userIdx) => {
+  // 1. 친구여부 확인
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT *
+                  FROM friends
+                  WHERE user1_idx = ? OR user2_idx = ?`;
+
+    mysql.query(sql, [userIdx, userIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.length == 0) {
+          reject(32400);
+        } else {
+          resolve(rows);
+        }
+      }
     });
   });
 };

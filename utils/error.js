@@ -24,7 +24,7 @@ exports.code =
     }
   },
 
-  // refresh 
+  // refresh
   13400 : {
     status: 400,
     contents: {
@@ -120,5 +120,30 @@ exports.code =
       code: 29400,
       message: "No such user exists (Foreign Key Error)"
     }
+  },
+
+  // Friend API 관련 에러 코드
+  // Add
+  30400: {
+    status: 400,
+    contents: {
+      code: 30400,
+      message: "Already Friend"
+    }
+  },
+  31400: {
+    status: 400,
+    contents: {
+      code: 31400,
+      message: "Not Friend"
+    }
+  },
+  32400: {
+    status: 400,
+    contents: {
+      code: 32400,
+      message: "No Friend"
+    }
   }
+
 };
