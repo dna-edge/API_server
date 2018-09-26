@@ -84,9 +84,9 @@ exports.add = async (req, res, next) => {
         result
       };
     }
-  
+
     return res.status(status).json(response);
-  }); 
+  });
 };
 
 /*******************
@@ -327,7 +327,7 @@ exports.showWait = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.showWait(userIdx);
+    result = await friendModel.showWait(userIdx, receiverIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -336,7 +336,7 @@ exports.showWait = async (req, res, next) => {
   /* 조회 성공 시 */
   const respond = {
     status: 200,
-    message : "Show Friend Wait Successfully",
+    message : "Show Friend Wait Successfully, you've sent a request already.",
     result
   };
   return res.status(200).json(respond);

@@ -45,8 +45,8 @@ exports.add = (userIdx, receiverIdx) => {
   })
   .then(() => {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT idx, nickname, avatar 
-                     FROM users 
+      const sql = `SELECT idx, nickname, avatar
+                     FROM users
                     WHERE idx = ?`;
       mysql.query(sql, receiverIdx, (err, rows) => {
         if (err) {
