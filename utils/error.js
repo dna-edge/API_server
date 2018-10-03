@@ -131,6 +131,7 @@ exports.code =
       message: "Already Friend"
     }
   },
+  //delete
   31400: {
     status: 400,
     contents: {
@@ -138,6 +139,7 @@ exports.code =
       message: "Not Friend"
     }
   },
+  //show
   32400: {
     status: 400,
     contents: {
@@ -145,6 +147,7 @@ exports.code =
       message: "No Friend"
     }
   },
+  //show list
   33400: {
     status: 400,
     contents: {
@@ -152,6 +155,7 @@ exports.code =
       message: "No Request Exists"
     }
   },
+  //add request
   34400: {
     status: 400,
     contents: {
@@ -160,4 +164,45 @@ exports.code =
     }
   }
 
+  // Posting API 관련 에러 코드
+  // Write
+  40400: {
+    status: 400,
+    contents: {
+      code: 30400,
+      message: "Write Posting Failed"
+    }
+  },
+  //delete
+  41400: {
+    status: 400,
+    contents: {
+      code: 31400,
+      message: "Access denied to the posting"
+    }
+  },
+  //show
+  42400: {
+    status: 400,
+    contents: {
+      code: 32400,
+      message: "No Friend"
+    }
+  },
+  //show list
+  33400: {
+    status: 400,
+    contents: {
+      code: 33400,
+      message: "No Request Exists"
+    }
+  },
+  //add request
+  34400: {
+    status: 400,
+    contents: {
+      code: 34400,
+        message: "Already sent request"
+    }
+  }
 };

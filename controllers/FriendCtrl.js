@@ -10,12 +10,12 @@ let validationError = {
 };
 
 /*******************
- *  Add
+ *  send request
  *  @param: id
- *  TODO add friend
- *  TODO 친구 추가
+ *  TODO request friend
+ *  TODO 친구 요청
  ********************/
-exports.add = async (req, res, next) => {
+exports.sendReq = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
   const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
@@ -37,7 +37,51 @@ exports.add = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.add(userIdx, receiverIdx);
+    result = await friendModel.sendReq(userIdx, receiverIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+
+  /* 친구요청 성공 시 */
+  const respond = {
+    status: 201,
+    message : "Send Friend Request Successfully",
+    result
+  };
+  return res.status(201).json(respond);
+
+};
+
+/*******************
+ *  accept request
+ *  @param: idx
+ *  TODO accept request
+ *  TODO 친구 요청 수락하기(친구되기)
+ ********************/
+exports.accReq = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
+  /* 1. 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!receiverIdx || receiverIdx === null) {
+    isValid = false;
+    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+  let result = '';
+
+  try {
+    result = await friendModel.accReq(userIdx, receiverIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -87,6 +131,133 @@ exports.add = async (req, res, next) => {
 
     return res.status(status).json(response);
   });
+};
+
+/*******************
+ *  Delete request
+ *  @param: idx
+ *  TODO delete friend request
+ *  TODO 친구 요청 삭제
+ ********************/
+exports.delReq = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
+  /* 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!receiverIdx || receiverIdx === null) {
+    isValid = false;
+    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+
+  let result = '';
+
+  try {
+    result = await friendModel.delReq(userIdx, receiverIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+
+  /* 삭제 성공 시 */
+  const respond = {
+    status: 201,
+    message : "Delete Friend Request Successfully",
+    result
+  };
+  return res.status(201).json(respond);
+};
+
+/*******************
+ *  Show Request list
+ *  @param: idx
+ *  TODO show friend request
+ *  TODO 친구 요청 리스트 조회
+ ********************/
+exports.showReqList = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+
+  /* 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+
+  let result = '';
+
+  try {
+    result = await friendModel.showReqList(userIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+
+  /* 조회 성공 시 */
+  const respond = {
+    status: 200,
+    message : "Show Friend Request Successfully",
+    result
+  };
+  return res.status(200).json(respond);
+};
+
+/*******************
+ *  Show Wait
+ *  @param: idx
+ *  TODO show friend wait
+ *  TODO 친구 대기 여부 조회
+ ********************/
+exports.showWait = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
+
+  /* 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!receiverIdx || receiverIdx === null) {
+    isValid = false;
+    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+
+  let result = '';
+
+  try {
+    result = await friendModel.showWait(userIdx, receiverIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+
+  /* 조회 성공 시 */
+  const respond = {
+    status: 200,
+    message : "Show Friend Wait Successfully, you've sent a request already.",
+    result
+  };
+  return res.status(200).json(respond);
 };
 
 /*******************
@@ -164,179 +335,8 @@ exports.show = async (req, res, next) => {
 
   /* 조회 성공 시 */
   const respond = {
-    status: 201,
+    status: 200,
     message : "Show Friend Successfully",
-    result
-  };
-  return res.status(201).json(respond);
-};
-
-/*******************
- *  Add_req
- *  @param: id
- *  TODO request friend
- *  TODO 친구 요청
- ********************/
-exports.addReq = async (req, res, next) => {
-  /* PARAM */
-  const userIdx = req.userData.idx;
-  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
-  /* 1. 유효성 체크하기 */
-  let isValid = true;
-
-  if (!userIdx || userIdx === null) {
-    isValid = false;
-    validationError.errors.userIdx = { message : "userIDX is required" };
-  }
-
-  if (!receiverIdx || receiverIdx === null) {
-    isValid = false;
-    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
-  }
-
-  if (!isValid) return res.status(400).json(validationError);
-  /* 유효성 체크 끝 */
-  let result = '';
-
-  try {
-    result = await friendModel.addReq(userIdx, receiverIdx);
-  } catch (err) {
-    console.log(err);
-    return res.json(errorCode[err]);
-  }
-
-  /* 친구요청 성공 시 */
-  const respond = {
-    status: 201,
-    message : "Add Friend Request Successfully",
-    result
-  };
-  return res.status(201).json(respond);
-
-};
-
-/*******************
- *  Delete_req
- *  @param: idx
- *  TODO delete friend request
- *  TODO 친구 요청 삭제
- ********************/
-exports.deleteReq = async (req, res, next) => {
-  /* PARAM */
-  const userIdx = req.userData.idx;
-  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
-  /* 유효성 체크하기 */
-  let isValid = true;
-
-  if (!userIdx || userIdx === null) {
-    isValid = false;
-    validationError.errors.userIdx = { message : "userIDX is required" };
-  }
-
-  if (!receiverIdx || receiverIdx === null) {
-    isValid = false;
-    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
-  }
-
-  if (!isValid) return res.status(400).json(validationError);
-  /* 유효성 체크 끝 */
-
-  let result = '';
-
-  try {
-    result = await friendModel.deleteReq(userIdx, receiverIdx);
-  } catch (err) {
-    console.log(err);
-    return res.json(errorCode[err]);
-  }
-
-  /* 삭제 성공 시 */
-  const respond = {
-    status: 201,
-    message : "Delete Friend Request Successfully",
-    result
-  };
-  return res.status(201).json(respond);
-};
-
-/*******************
- *  Show Request
- *  @param: idx
- *  TODO show friend request
- *  TODO 친구 요청 리스트 조회
- ********************/
-exports.showReqList = async (req, res, next) => {
-  /* PARAM */
-  const userIdx = req.userData.idx;
-
-  /* 유효성 체크하기 */
-  let isValid = true;
-
-  if (!userIdx || userIdx === null) {
-    isValid = false;
-    validationError.errors.userIdx = { message : "userIDX is required" };
-  }
-  if (!isValid) return res.status(400).json(validationError);
-  /* 유효성 체크 끝 */
-
-  let result = '';
-
-  try {
-    result = await friendModel.showReqList(userIdx);
-  } catch (err) {
-    console.log(err);
-    return res.json(errorCode[err]);
-  }
-
-  /* 조회 성공 시 */
-  const respond = {
-    status: 200,
-    message : "Show Friend Request Successfully",
-    result
-  };
-  return res.status(200).json(respond);
-};
-
-/*******************
- *  Show Wait
- *  @param: idx
- *  TODO show friend wait
- *  TODO 친구 대기 여부 조회
- ********************/
-exports.showWait = async (req, res, next) => {
-  /* PARAM */
-  const userIdx = req.userData.idx;
-  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
-
-  /* 유효성 체크하기 */
-  let isValid = true;
-
-  if (!userIdx || userIdx === null) {
-    isValid = false;
-    validationError.errors.userIdx = { message : "userIDX is required" };
-  }
-
-  if (!receiverIdx || receiverIdx === null) {
-    isValid = false;
-    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
-  }
-
-  if (!isValid) return res.status(400).json(validationError);
-  /* 유효성 체크 끝 */
-
-  let result = '';
-
-  try {
-    result = await friendModel.showWait(userIdx, receiverIdx);
-  } catch (err) {
-    console.log(err);
-    return res.json(errorCode[err]);
-  }
-
-  /* 조회 성공 시 */
-  const respond = {
-    status: 200,
-    message : "Show Friend Wait Successfully, you've sent a request already.",
     result
   };
   return res.status(200).json(respond);
