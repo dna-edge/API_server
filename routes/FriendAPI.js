@@ -4,18 +4,18 @@ const friendCtrl = require('../controllers/FriendCtrl')
 
 module.exports = (router) => {
   router.route('/friends/sendReq')
-    .post(authCtrl.auth, friendCtrl.sendReq);                  // 친구요청
+    .post(authCtrl.auth, friendCtrl.sendReq);                // 친구요청
 
   router.route('/friends/accReq')
-    .post(authCtrl.auth, friendCtrl.accReq);              // 친구수락(친구추가)
+    .post(authCtrl.auth, friendCtrl.accReq);               // 친구수락(친구추가)
 
-  router.route('/friend_wait/delReq')
+  router.route('/friends/delReq')
     .post(authCtrl.auth, friendCtrl.delReq);              // 친구 요청 삭제
 
-  router.route('/friend_wait/showReqList')
+  router.route('/friends/showReqList')
     .post(authCtrl.auth, friendCtrl.showReqList);             // 친구 요청 조회
 
-  router.route('/friend_wait/showWait')
+  router.route('/friends/showWait')
     .post(authCtrl.auth, friendCtrl.showWait);             // 친구 대기여부 조회
 
   router.route('/friends/delete')

@@ -162,47 +162,84 @@ exports.code =
       code: 34400,
         message: "Already sent request"
     }
-  }
+  },
 
   // Posting API 관련 에러 코드
   // Write
   40400: {
     status: 400,
     contents: {
-      code: 30400,
+      code: 40400,
       message: "Write Posting Failed"
     }
   },
-  //delete
+  //delete/alter access denied
   41400: {
     status: 400,
     contents: {
-      code: 31400,
+      code: 41400,
       message: "Access denied to the posting"
     }
   },
-  //show
+  // delete
   42400: {
     status: 400,
     contents: {
-      code: 32400,
-      message: "No Friend"
+      code: 42400,
+      message: "Delete failed"
     }
   },
-  //show list
-  33400: {
+  //delete likes
+  43400: {
     status: 400,
     contents: {
-      code: 33400,
-      message: "No Request Exists"
+      code: 43400,
+      message: "No Likes on this posting"
     }
   },
-  //add request
-  34400: {
+  //show
+  44400: {
     status: 400,
     contents: {
-      code: 34400,
-        message: "Already sent request"
+      code: 44400,
+        message: "No posting exists"
     }
-  }
+  },
+  //update
+  45400: {
+    status: 400,
+    contents: {
+      code: 45400,
+        message: "Update posting failed"
+    }
+  },
+  //like
+  46400: {
+    status: 400,
+    contents: {
+      code: 46400,
+        message: "Already likes posting"
+    }
+  },
+  47400: {
+    status: 400,
+    contents: {
+      code: 47400,
+        message: "un/likes posting failed"
+    }
+  },
+  48400: {
+    status: 400,
+    contents: {
+      code: 48400,
+        message: "change likes posting count failed"
+    }
+  },
+  49400: {
+    status: 400,
+    contents: {
+      code: 49400,
+        message: "No likes exists"
+    }
+  },
 };

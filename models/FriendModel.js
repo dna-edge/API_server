@@ -35,7 +35,7 @@ exports.sendReq = (userIdx, receiverIdx) => {
           if (err) {
             reject (err);
           } else {
-            if (rows.length !== 0) {
+            if (rows.length === 0) {
               resolve();
             } else {
               reject(34400);
@@ -54,7 +54,7 @@ exports.sendReq = (userIdx, receiverIdx) => {
             reject (err);
           } else {
             if (rows.affectedRows === 1) {
-              resolve();
+              resolve(rows);
             } else {
               reject(22500);
             }
@@ -75,16 +75,15 @@ exports.accReq = (userIdx, receiverIdx) => {
                   FROM friend_wait
                   WHERE (receiver_idx = ? AND sender_idx = ?)`;
     mysql.query(sql, [userIdx, receiverIdx], (err, rows) => {
-        if (err) {
-          reject (err);
+      if (err) {
+        reject (err);
+      } else {
+        if (rows.length !== 0) {
+          resolve(null);
         } else {
-          if (rows.length !== 0) {
-            resolve();
-          } else {
-            reject(34400);
-          }
+          reject(33400);
         }
-      });
+      }
     });
   })
   .then(() => {
@@ -93,41 +92,41 @@ exports.accReq = (userIdx, receiverIdx) => {
       const sql = `DELETE FROM friend_wait
                     WHERE (receiver_idx = ? AND sender_idx = ?)`;
       mysql.query(sql, [userIdx, receiverIdx], (err, rows) => {
-          if (err) {
-            reject (err);
+        if (err) {
+          reject (err);
+        } else {
+          if (rows.affectedRows === 1) {
+            resolve();
           } else {
-            if (rows.affectedRows === 1) {
-              resolve();
-            } else {
-              reject(22500);
-            }
+            reject(22500);
           }
+        }
       });
     });
   })
   .then(() => {
-    // 3. DB에 정보 삽입하기
+  // 3. DB에 정보 삽입하기
     return new Promise((resolve, reject) => {
-      const sql = `INSERT INTO friend (user1_idx, user2_idx)
-                          VALUES     (?, ?)`;
+      const sql = `INSERT INTO friends (user1_idx, user2_idx)
+                    VALUES     (?, ?)`;
       mysql.query(sql, [userIdx, receiverIdx], (err, rows) => {
-          if (err) {
-            reject (err);
+        if (err) {
+          reject (err);
+        } else {
+          if (rows.affectedRows === 1) {
+            resolve();
           } else {
-            if (rows.affectedRows === 1) {
-              resolve();
-            } else {
-              reject(22500);
-            }
+            reject(22500);
           }
+        }
       });
     });
   })
   .then(() => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT idx, nickname, avatar
-                     FROM users
-                    WHERE idx = ?`;
+                   FROM users
+                  WHERE idx = ?`;
       mysql.query(sql, receiverIdx, (err, rows) => {
         if (err) {
           reject (err);
@@ -161,7 +160,7 @@ exports.delReq = (userIdx,receiverIdx) => {
         if (rows.length === 0) {
           reject(33400);
         } else {
-          resolve(null);
+          resolve();
         }
       }
     });
@@ -229,7 +228,7 @@ exports.delReq = (userIdx,receiverIdx) => {
          if (rows.length === 0) {
            reject(33400);
          } else {
-           resolve(null);
+           resolve(rows);
          }
        }
      });
@@ -254,7 +253,7 @@ exports.delete = (userIdx,receiverIdx) => {
         if (rows.length === 0) {
           reject(31400);
         } else {
-          resolve(null);
+          resolve(rows);
         }
       }
     });

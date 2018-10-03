@@ -1,7 +1,6 @@
 const mysql = global.utils.mysql;
 const redis = global.utils.redis;
 
-// 만들어야 할 기능 : 글쓰기, 글수정, 글삭제, 글조회, 글좋아요
 /*******************
  *  Write
  *  @param: useridx, userLoc, date, pcontents
@@ -16,7 +15,7 @@ exports.write = (userIdx, userLoc, date, pcontents) => {
         reject(err);
       } else {
         if (rows.affectedRows === 1) {
-          resolve();
+          resolve(rows);
         } else {
           reject(40400);
         }
@@ -43,7 +42,7 @@ exports.delete = (userIdx, postingIdx) => {
         if (rows.length === 0) {
           reject(41400);
         } else {
-          resolve(null);
+          resolve();
         }
       }
     });
@@ -52,15 +51,33 @@ exports.delete = (userIdx, postingIdx) => {
     // 2. DB에서 정보 삭제하기
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM posting
-                    WHERE (user1_idx = ? AND user2_idx = ?) OR (user1_idx = ? AND user2_idx = ?)`;
-      mysql.query(sql, [userIdx, receiverIdx, receiverIdx, userIdx], (err, rows) => {
+                    WHERE (writer_idx = ? AND posting_idx = ?)`;
+      mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
           if (err) {
             reject (err);
           } else {
             if (rows.affectedRows === 1) {
               resolve(rows);
             } else {
-              reject(22500);
+              reject(42400);
+            }
+          }
+      });
+    });
+  })
+  .then(() => {
+    // 3. DB에서 정보 삭제하기
+    return new Promise((resolve, reject) => {
+      const sql = `DELETE FROM posting_likes
+                    WHERE (writer_idx = ? AND posting_idx = ?)`;
+      mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
+          if (err) {
+            reject (err);
+          } else {
+            if (rows.affectedRows !== 0) {
+              resolve(rows);
+            } else {
+              reject(43400);
             }
           }
       });
@@ -70,21 +87,20 @@ exports.delete = (userIdx, postingIdx) => {
 
 /*******************
  *  Show
- *  @param: idx
+ *  @param: postingidx
  ********************/
-exports.show = (userIdx) => {
-  // 1. 친구여부 확인
+exports.show = (postingIdx) => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
-                  FROM friends
-                  WHERE user1_idx = ? OR user2_idx = ?`;
+                  FROM posting
+                  WHERE posting_idx = ?`;
 
-    mysql.query(sql, [userIdx, userIdx], (err, rows) => {
+    mysql.query(sql, [postingIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
         if (rows.length === 0) {
-          reject(32400);
+          reject(44400);
         } else {
           resolve(rows);
         }
@@ -94,66 +110,104 @@ exports.show = (userIdx) => {
 };
 
 /*******************
- *  Show req list
- *  @param: userData = { idx }
+ *  Update posting
+ *  @param: useridx, postingidx, pcontents
  ********************/
- exports.showReqList = (userIdx) => {
-   // 1. 친구여부 확인
+ exports.update = (userIdx, postingIdx, pcontents) => {
+   // 1. 작성자여부 확인
    return new Promise((resolve, reject) => {
      const sql = `SELECT *
-                   FROM friend_wait
-                   WHERE sender_idx = ? OR receiver_idx = ?`;
+                   FROM posting
+                   WHERE (writer_idx = ? AND posting_idx = ?)`;
 
-     mysql.query(sql, [userIdx, userIdx], (err, rows) => {
+     mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
        if (err) {
          reject(err);
        } else {
          if (rows.length === 0) {
-           reject(33400);
+           reject(41400);
          } else {
-           resolve(rows);
+           resolve();
          }
        }
+     });
+   })
+   .then(() => {
+     // 2. DB에서 정보 수정하기
+     return new Promise((resolve, reject) => {
+       const sql = `UPDATE posting
+                    SET contents = ?
+                    WHERE (writer_idx = ? AND posting_idx = ?)`;
+       mysql.query(sql, [pcontents, userIdx, postingIdx], (err, rows) => {
+           if (err) {
+             reject (err);
+           } else {
+             if (rows.affectedRows === 1) {
+               resolve(rows);
+             } else {
+               reject(45400);
+             }
+           }
+       });
      });
    });
  };
 
 /*******************
- *  Delete req
- *  @param: idx
+ *  like posting
+ *  @param: useridx, postingidx, plikes
  ********************/
-exports.deleteReq = (userIdx,receiverIdx) => {
-  // 1. 요청여부 확인
+exports.like = (userIdx, postingIdx, plikes) => {
+  // 1. 공감리스트에 있는지 확인하기
   return new Promise((resolve, reject) => {
-    const sql = `SELECT *
-                  FROM friend_wait
-                  WHERE (sender_idx = ? AND receiver_idx = ?) OR (sender_idx = ? AND receiver_idx = ?)`;
+    const sql = `SELECT * FROM posting_likes
+                  WHERE (posting_idx, user_idx)`;
 
-    mysql.query(sql, [userIdx, receiverIdx, receiverIdx, userIdx], (err, rows) => {
+    mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
-        if (rows.length === 0) {
-          reject(33400);
+        if (rows.length !== 0) {
+          reject(46400);
         } else {
-          resolve(null);
+          resolve(true);
         }
       }
     });
   })
   .then(() => {
-    // 2. DB에서 정보 삭제하기
+    // 2. 공감하기
     return new Promise((resolve, reject) => {
-      const sql = `DELETE FROM friend_wait
-                    WHERE (sender_idx = ? AND receiver_idx = ?) OR (sender_idx = ? AND receiver_idx = ?)`;
-      mysql.query(sql, [userIdx, receiverIdx, receiverIdx, userIdx], (err, rows) => {
+      const sql = `INSERT INTO posting_likes(posting_idx, user_idx)
+                    VALUES (?, ?)`;
+
+      mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (rows.affectedRows === 0) {
+            reject(47400);
+          } else {
+            resolve(rows);
+          }
+        }
+      });
+    });
+  })
+  .then(() => {
+    // 3. 공감수 수정하기
+    return new Promise((resolve, reject) => {
+      const sql = `UPDATE posting
+                   SET likes_cnt = ?
+                   WHERE posting_idx = ?`;
+      mysql.query(sql, [plikes+1, postingIdx], (err, rows) => {
           if (err) {
             reject (err);
           } else {
             if (rows.affectedRows === 1) {
               resolve(rows);
             } else {
-              reject(22500);
+              reject(48400);
             }
           }
       });
@@ -162,69 +216,63 @@ exports.deleteReq = (userIdx,receiverIdx) => {
 };
 
 /*******************
- *  Add req
- *  @param: idx
+ *  Unlike posting
+ *  @param: useridx, postingidx, plikes
  ********************/
- exports.addReq = (userIdx,receiverIdx) => {
-   // 1. 요청여부 확인
-   return new Promise((resolve, reject) => {
-     const sql = `SELECT *
-                   FROM friend_wait
-                   WHERE (sender_idx = ? AND receiver_idx = ?) OR (sender_idx = ? AND receiver_idx = ?)`;
+exports.unlike = (userIdx, postingIdx, plikes) => {
+  // 1. 공감리스트에 있는지 확인하기
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM posting_likes
+                  WHERE (posting_idx, user_idx)`;
 
-     mysql.query(sql, [userIdx, receiverIdx, receiverIdx, userIdx], (err, rows) => {
-       if (err) {
-         reject(err);
-       } else {
-         if (rows.length !== 0) {
-           reject(34400);
-         } else {
-           resolve(null);
-         }
-       }
-     });
-   })
-   .then(() => {
-     // 2. DB에 정보 추가하기
-     return new Promise((resolve, reject) => {
-       const sql = `INSERT INTO friend_wait (sender_idx, receiver_idx)
-                           VALUES     (?, ?)`;
-       mysql.query(sql, [userIdx, receiverIdx], (err, rows) => {
-           if (err) {
-             reject (err);
-           } else {
-             if (rows.affectedRows === 1) {
-               resolve(rows);
-             } else {
-               reject(22500);
-             }
-           }
-       });
-     });
-   });
- };
+    mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.length === 0) {
+          reject(49400);
+        } else {
+          resolve(true);
+        }
+      }
+    });
+  })
+  .then(() => {
+    // 2. 공감 취소하기
+    return new Promise((resolve, reject) => {
+      const sql = `DELETE FROM posting_likes
+                    WHERE posting_idx = ? AND user_idx = ?`;
 
- /*******************
-  *  show wait
-  *  @param: idx
-  ********************/
- exports.showWait = (userIdx, receiverIdx) => {
-   // 1. 친구대기상태인지 확인
-   return new Promise((resolve, reject) => {
-     const sql = `SELECT *
-                   FROM friend_wait
-                   WHERE (sender_idx = ? AND receiver_idx = ?) OR (sender_idx = ? AND receiver_idx = ?)`;
-
-     mysql.query(sql, [userIdx, receiverIdx, receiverIdx, userIdx], (err, rows) => {
-       if (err) {
-         reject(err);
-       } else {
-         if (rows.length === 0) {
-           reject(33400);
-         } else {
-           resolve(null);
-         }
-       }
-     });
-   });
- };
+      mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (rows.affectedRows === 0) {
+            reject(47400);
+          } else {
+            resolve(rows);
+          }
+        }
+      });
+    });
+  })
+  .then(() => {
+    // 3. 공감수 수정하기
+    return new Promise((resolve, reject) => {
+      const sql = `UPDATE posting
+                   SET likes_cnt = ?
+                   WHERE posting_idx = ?`;
+      mysql.query(sql, [plikes-1, postingIdx], (err, rows) => {
+          if (err) {
+            reject (err);
+          } else {
+            if (rows.affectedRows === 1) {
+              resolve(rows);
+            } else {
+              reject(48400);
+            }
+          }
+      });
+    });
+  });
+};

@@ -141,12 +141,12 @@ exports.show = async (req, res, next) => {
 };
 
 /*******************
- *  Alter
+ *  update
  *  @param: useridx, pstingidx, pcontents
- *  TODO alter posting
+ *  TODO update posting
  *  TODO 포스팅 수정
  ********************/
-exports.alter = async (req, res, next) => {
+exports.update = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
   const postingIdx = req.body.postingIdx || req.params.postingIdx;
@@ -174,7 +174,7 @@ exports.alter = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.alter(userIdx, postingIdx, pcontents);
+    result = await postingModel.update(userIdx, postingIdx, pcontents);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -183,7 +183,7 @@ exports.alter = async (req, res, next) => {
   /* 포스팅 수정 성공 시 */
   const respond = {
     status: 201,
-    message : "Alter posting Successfully",
+    message : "Update posting Successfully",
     result
   };
   return res.status(201).json(respond);
@@ -192,7 +192,7 @@ exports.alter = async (req, res, next) => {
 
 /*******************
  *  like
- *  @param: useridx, postingidx
+ *  @param: useridx, postingidx, plikes
  *  TODO like posting
  *  TODO 포스팅 공감하기
  ********************/
@@ -200,6 +200,7 @@ exports.like = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
   const postingIdx = req.body.postingIdx || req.params.postingIdx;
+  const plies = req.body.plies || req.params.plikes;
   /* 유효성 체크하기 */
   let isValid = true;
 
@@ -219,7 +220,7 @@ exports.like = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.like(userIdx, postingIdx);
+    result = await postingModel.like(userIdx, postingIdx, plikes);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -236,7 +237,7 @@ exports.like = async (req, res, next) => {
 
 /*******************
  *  unlike
- *  @param: useridx, postingidx
+ *  @param: useridx, postingidx, plikes
  *  TODO unlike posting
  *  TODO 포스팅 공감 취소하기
  ********************/
@@ -244,6 +245,7 @@ exports.unlike = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
   const postingIdx = req.body.postingIdx || req.params.postingIdx;
+  const plikes = req.body.plikes || req.params.plikes;
   /* 유효성 체크하기 */
   let isValid = true;
 
@@ -263,7 +265,7 @@ exports.unlike = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.unlike(userIdx, postingIdx);
+    result = await postingModel.unlike(userIdx, postingIdx, plikes);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
