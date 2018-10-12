@@ -18,9 +18,11 @@ let validationError = {
 exports.write = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const userLoc = req.body.userLoc || req.params.userLoc;
+  const userXLoc = req.body.userXLoc || req.params.userXLoc;
+  const userYLoc = req.body.userYLoc || req.params.userYLoc;
   const date = req.body.date || req.params.date;
   const pcontents = req.body.pcontents || req.params.pcontents;
+  const onlyme = req.body.onlyme || req.params.onlyme;
   /* 1. 유효성 체크하기 */
   let isValid = true;
 
@@ -29,9 +31,14 @@ exports.write = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!userLoc || userLoc === null) {
+  if (!userXLoc || userXLoc === null ) {
     isValid = false;
-    validationError.errors.userLoc= { message : "userLOC is required" };
+    validationError.errors.userXLoc= { message : "userXLOC is required" };
+  }
+
+  if (!userYLoc || userYLoc === null ) {
+    isValid = false;
+    validationError.errors.userYLoc= { message : "userYLOC is required" };
   }
 
   if (!pcontents || pcontents === null) {
@@ -44,7 +51,7 @@ exports.write = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.write(userIdx, userLoc, date, pcontents);
+    result = await postingModel.write(userIdx, userXLoc, userYLoc, date, pcontents, onlyme);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -200,7 +207,6 @@ exports.like = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
   const postingIdx = req.body.postingIdx || req.params.postingIdx;
-  const plies = req.body.plies || req.params.plikes;
   /* 유효성 체크하기 */
   let isValid = true;
 
@@ -220,7 +226,7 @@ exports.like = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.like(userIdx, postingIdx, plikes);
+    result = await postingModel.like(userIdx, postingIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -245,7 +251,6 @@ exports.unlike = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
   const postingIdx = req.body.postingIdx || req.params.postingIdx;
-  const plikes = req.body.plikes || req.params.plikes;
   /* 유효성 체크하기 */
   let isValid = true;
 
@@ -265,7 +270,7 @@ exports.unlike = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.unlike(userIdx, postingIdx, plikes);
+    result = await postingModel.unlike(userIdx, postingIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -278,4 +283,220 @@ exports.unlike = async (req, res, next) => {
     result
   };
   return res.status(201).json(respond);
+};
+
+/*******************
+ *  Reply
+ *  @param: useridx, postingIdx
+ *  TODO reply to posting
+ *  TODO 포스팅 댓글쓰기
+ ********************/
+exports.reply = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const postingIdx = req.body.postingIdx || req.params.postingIdx;
+  const rcontents = req.body.rcontents || req.params.rcontents;
+  /* 1. 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!postingIdx || postingIdx === null) {
+    isValid = false;
+    validationError.errors.postingIdx= { message : "postingIdx is required" };
+  }
+
+  if (!rcontents || rcontents === null) {
+    isValid = false;
+    validationError.errors.rcontents= { message : "rcontents is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+  let result = '';
+
+  try {
+    result = await postingModel.reply(userIdx, postingIdx, rcontents);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+  const respond = {
+    status: 201,
+    message : "Reply to Posting Successfully",
+    result
+  };
+  return res.status(201).json(respond);
+
+};
+
+/*******************
+ *  Delete Reply
+ *  @param: useridx, replyIdx
+ *  TODO delete reply from posting
+ *  TODO 포스팅 댓글 삭제하기
+ ********************/
+exports.dreply = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const replyIdx = req.body.replyIdx || req.params.replyIdx;
+  /* 1. 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!replyIdx || replyIdx === null) {
+    isValid = false;
+    validationError.errors.postingIdx= { message : "replyIdx is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+  let result = '';
+
+  try {
+    result = await postingModel.dreply(userIdx, replyIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+  const respond = {
+    status: 201,
+    message : "Delete Reply from Posting Successfully",
+    result
+  };
+  return res.status(201).json(respond);
+
+};
+
+/*******************
+ *  Bookmark
+ *  @param: useridx, postingIdx
+ *  TODO posting bookmark
+ *  TODO 포스팅 북마크하기
+ ********************/
+exports.bookmark = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const postingIdx = req.body.postingIdx || req.params.postingIdx;
+  /* 1. 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!postingIdx || postingIdx === null) {
+    isValid = false;
+    validationError.errors.postingIdx= { message : "postingIdx is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+  let result = '';
+
+  try {
+    result = await postingModel.bookmark(userIdx, postingIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+  const respond = {
+    status: 201,
+    message : "Bookmark Posting Successfully",
+    result
+  };
+  return res.status(201).json(respond);
+
+};
+
+/*******************
+ *  Delete Bookmark
+ *  @param: useridx, postingIdx
+ *  TODO posting bookmark
+ *  TODO 포스팅 북마크 취소하기
+ ********************/
+exports.dbookmark = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const postingIdx = req.body.postingIdx || req.params.postingIdx;
+  /* 1. 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!postingIdx || postingIdx === null) {
+    isValid = false;
+    validationError.errors.postingIdx= { message : "postingIdx is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+  let result = '';
+
+  try {
+    result = await postingModel.dbookmark(userIdx, postingIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+  const respond = {
+    status: 201,
+    message : "Delete Bookmark Successfully",
+    result
+  };
+  return res.status(201).json(respond);
+
+};
+
+/*******************
+ *  Show Bookmark
+ *  @param: useridx, postingIdx
+ *  TODO show posting bookmark
+ *  TODO 포스팅 북마크 목록 조회하기
+ ********************/
+exports.showBookmark = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const postingIdx = req.body.postingIdx || req.params.postingIdx;
+  /* 1. 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!postingIdx || postingIdx === null) {
+    isValid = false;
+    validationError.errors.postingIdx= { message : "postingIdx is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+  let result = '';
+
+  try {
+    result = await postingModel.showBookmark(userIdx, postingIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+  const respond = {
+    status: 201,
+    message : "Show Bookmark Successfully",
+    result
+  };
+  return res.status(201).json(respond);
+
 };

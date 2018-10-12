@@ -79,7 +79,7 @@ exports.accReq = (userIdx, receiverIdx) => {
         reject (err);
       } else {
         if (rows.length !== 0) {
-          resolve(null);
+          resolve();
         } else {
           reject(33400);
         }

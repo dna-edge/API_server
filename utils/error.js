@@ -242,4 +242,32 @@ exports.code =
         message: "No likes exists"
     }
   },
+  50400: {
+    status: 400,
+    contents: {
+      code: 50400,
+        message: "Write/Delete Reply Failed"
+    }
+  },
+  51400: {
+    status: 400,
+    contents: {
+      code: 51400,
+        message: "No Reply Exists"
+    }
+  },
+  52400: {
+    status: 400,
+    contents: {
+      code: 52400,
+        message: "Bookmark Failed"
+    }
+  },
+  53400: {
+    status: 400,
+    contents: {
+      code: 53400,
+        message: "No Bookmark Exists"
+    }
+  },
 };

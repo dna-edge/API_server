@@ -5,12 +5,12 @@ const redis = global.utils.redis;
  *  Write
  *  @param: useridx, userLoc, date, pcontents
  ********************/
-exports.write = (userIdx, userLoc, date, pcontents) => {
+exports.write = (userIdx, userXLoc, userYLoc, date, pcontents, onlyme) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting (writer_idx, location, posting_date, contents)
-                        VALUES     (?, ?, ?, ?)`;
+    const sql = `INSERT INTO posting (writer_idx, postLat, postLng, posting_date, contents, onlyme)
+                        VALUES     (?, ?, ?, ?, ?, ?)`;
 
-    mysql.query(sql, [userIdx, userLoc, date, pcontents], (err, rows) => {
+    mysql.query(sql, [userIdx, userXLoc, userYLoc, date, pcontents, onlyme], (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -48,7 +48,7 @@ exports.delete = (userIdx, postingIdx) => {
     });
   })
   .then(() => {
-    // 2. DB에서 정보 삭제하기
+    // 2. DB에서 정보 삭제하기-posting
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM posting
                     WHERE (writer_idx = ? AND posting_idx = ?)`;
@@ -66,19 +66,55 @@ exports.delete = (userIdx, postingIdx) => {
     });
   })
   .then(() => {
-    // 3. DB에서 정보 삭제하기
+    // 3. DB에서 정보 삭제하기-likes
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM posting_likes
-                    WHERE (writer_idx = ? AND posting_idx = ?)`;
-      mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
+                    WHERE posting_idx = ?`;
+      mysql.query(sql, postingIdx, (err, rows) => {
           if (err) {
             reject (err);
           } else {
-            if (rows.affectedRows !== 0) {
+            // if (rows.affectedRows !== 0) {
               resolve(rows);
-            } else {
-              reject(43400);
-            }
+            // } else {
+              // reject(43400);
+            // }
+          }
+      });
+    });
+  })
+  .then(() => {
+    // 4. DB에서 정보 삭제하기-reply
+    return new Promise((resolve, reject) => {
+      const sql = `DELETE FROM posting_reply
+                    WHERE posting_idx = ?`;
+      mysql.query(sql, postingIdx, (err, rows) => {
+          if (err) {
+            reject (err);
+          } else {
+            // if (rows.affectedRows !== 0) {
+              resolve(rows);
+            // } else {
+              // reject(50400);
+            // }
+          }
+      });
+    });
+  })
+  .then(() => {
+    // 5. DB에서 정보 삭제하기-bookmark
+    return new Promise((resolve, reject) => {
+      const sql = `DELETE FROM posting_bookmark
+                    WHERE posting_idx = ?`;
+      mysql.query(sql, postingIdx, (err, rows) => {
+          if (err) {
+            reject (err);
+          } else {
+            // if (rows.affectedRows !== 0) {
+              resolve(rows);
+            // } else {
+              // reject(52400);
+            // }
           }
       });
     });
@@ -157,11 +193,11 @@ exports.show = (postingIdx) => {
  *  like posting
  *  @param: useridx, postingidx, plikes
  ********************/
-exports.like = (userIdx, postingIdx, plikes) => {
+exports.like = (userIdx, postingIdx) => {
   // 1. 공감리스트에 있는지 확인하기
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM posting_likes
-                  WHERE (posting_idx, user_idx)`;
+                  WHERE (posting_idx = ? AND user_idx = ?)`;
 
     mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
       if (err) {
@@ -198,9 +234,9 @@ exports.like = (userIdx, postingIdx, plikes) => {
     // 3. 공감수 수정하기
     return new Promise((resolve, reject) => {
       const sql = `UPDATE posting
-                   SET likes_cnt = ?
+                   SET likes_cnt = likes_cnt+1
                    WHERE posting_idx = ?`;
-      mysql.query(sql, [plikes+1, postingIdx], (err, rows) => {
+      mysql.query(sql, postingIdx, (err, rows) => {
           if (err) {
             reject (err);
           } else {
@@ -219,50 +255,31 @@ exports.like = (userIdx, postingIdx, plikes) => {
  *  Unlike posting
  *  @param: useridx, postingidx, plikes
  ********************/
-exports.unlike = (userIdx, postingIdx, plikes) => {
+exports.unlike = (userIdx, postingIdx) => {
   // 1. 공감리스트에 있는지 확인하기
   return new Promise((resolve, reject) => {
-    const sql = `SELECT * FROM posting_likes
-                  WHERE (posting_idx, user_idx)`;
+    const sql = `DELETE FROM posting_likes
+                  WHERE (posting_idx = ? AND user_idx = ?)`;
 
     mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
-        if (rows.length === 0) {
-          reject(49400);
+        if (rows.affectedRows === 0) {
+          reject(47400);
         } else {
-          resolve(true);
+          resolve(rows);
         }
       }
-    });
-  })
-  .then(() => {
-    // 2. 공감 취소하기
-    return new Promise((resolve, reject) => {
-      const sql = `DELETE FROM posting_likes
-                    WHERE posting_idx = ? AND user_idx = ?`;
-
-      mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (rows.affectedRows === 0) {
-            reject(47400);
-          } else {
-            resolve(rows);
-          }
-        }
-      });
     });
   })
   .then(() => {
     // 3. 공감수 수정하기
     return new Promise((resolve, reject) => {
       const sql = `UPDATE posting
-                   SET likes_cnt = ?
+                   SET likes_cnt = likes_cnt-1
                    WHERE posting_idx = ?`;
-      mysql.query(sql, [plikes-1, postingIdx], (err, rows) => {
+      mysql.query(sql, postingIdx, (err, rows) => {
           if (err) {
             reject (err);
           } else {
@@ -273,6 +290,142 @@ exports.unlike = (userIdx, postingIdx, plikes) => {
             }
           }
       });
+    });
+  });
+};
+
+/*******************
+ *  Reply
+ *  @param: useridx, postingIdx
+ ********************/
+exports.reply = (userIdx, postingIdx, rcontents) => {
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO posting_reply (posting_idx, user_idx, reply_contents)
+                        VALUES     (?, ?, ?)`;
+
+    mysql.query(sql, [postingIdx, userIdx, rcontents], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.affectedRows === 1) {
+          resolve(rows);
+        } else {
+          reject(50400);
+        }
+      }
+    });
+  });
+};
+
+/*******************
+ *  Delete reply
+ *  @param: userIdx, replyIdx
+ ********************/
+exports.dreply = (userIdx, replyIdx) => {
+  // 1. 작성자여부 확인
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT *
+                  FROM posting_reply
+                  WHERE (user_idx = ? AND reply_idx = ?)`;
+
+    mysql.query(sql, [userIdx, replyIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.length === 0) {
+          reject(41400);
+        } else {
+          resolve();
+        }
+      }
+    });
+  })
+  .then(() => {
+    // 2. DB에서 정보 삭제하기
+    return new Promise((resolve, reject) => {
+      const sql = `DELETE FROM posting_reply
+                    WHERE (user_idx = ? AND reply_idx = ?)`;
+      mysql.query(sql, [userIdx, replyIdx], (err, rows) => {
+          if (err) {
+            reject (err);
+          } else {
+            if (rows.affectedRows === 1) {
+              resolve(rows);
+            } else {
+              reject(51400);
+            }
+          }
+      });
+    });
+  });
+};
+
+/*******************
+ *  Bookmark
+ *  @param: useridx, postingIdx
+ ********************/
+exports.bookmark = (userIdx, postingIdx) => {
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO posting_bookmark (posting_idx, user_idx)
+                        VALUES     (?, ?)`;
+
+    mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.affectedRows === 1) {
+          resolve(rows);
+        } else {
+          reject(52400);
+        }
+      }
+    });
+  });
+};
+
+/*******************
+ *  Delete Bookmark
+ *  @param: useridx, postingIdx
+ ********************/
+exports.dbookmark = (userIdx, postingIdx) => {
+  return new Promise((resolve, reject) => {
+    const sql = `DELETE FROM posting_bookmark
+                  WHERE (user_idx = ? AND posting_idx = ?)`;
+
+    mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.affectedRows === 1) {
+          resolve(rows);
+        } else {
+          reject(52400);
+        }
+      }
+    });
+  });
+};
+
+/*******************
+ *  Show Bookmark
+ *  @param: useridx, postingIdx
+ ********************/
+exports.showBookmark = (userIdx, postingIdx) => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT *
+                  FROM posting_bookmark
+                  WHERE (user_idx = ? AND posting_idx = ?)`;
+
+    mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.length !== 0) {
+          resolve(rows);
+        } else {
+          reject(53400);
+        }
+      }
     });
   });
 };
