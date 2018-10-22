@@ -111,6 +111,7 @@ exports.accReq = async (req, res, next) => {
   })
   .catch((err) => {
     console.log(err);
+    status = 500;
   })
   .then(() => {
     if (status === 500) {
