@@ -18,9 +18,10 @@ let validationError = {
 exports.write = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const userXLoc = req.body.userXLoc || req.params.userXLoc;
-  const userYLoc = req.body.userYLoc || req.params.userYLoc;
+  const userLng = req.body.userLng || req.params.userLng;
+  const userLat = req.body.userLat || req.params.userLat;
   const date = req.body.date || req.params.date;
+  const ptitle = req.body.ptitle || req.params.ptitle;
   const pcontents = req.body.pcontents || req.params.pcontents;
   const onlyme = req.body.onlyme || req.params.onlyme;
   /* 1. 유효성 체크하기 */
@@ -31,14 +32,19 @@ exports.write = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!userXLoc || userXLoc === null ) {
+  if (!userLng|| userLng === null ) {
     isValid = false;
-    validationError.errors.userXLoc= { message : "userXLOC is required" };
+    validationError.errors.userLng= { message : "userLng is required" };
   }
 
-  if (!userYLoc || userYLoc === null ) {
+  if (!userLat || userLat === null ) {
     isValid = false;
-    validationError.errors.userYLoc= { message : "userYLOC is required" };
+    validationError.errors.userYLoc= { message : "userLat is required" };
+  }
+
+  if (!ptitle || ptitle === null) {
+    isValid = false;
+    validationError.errors.ptitle = { message : "ptitle is required" };
   }
 
   if (!pcontents || pcontents === null) {
@@ -51,7 +57,7 @@ exports.write = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.write(userIdx, userXLoc, userYLoc, date, pcontents, onlyme);
+    result = await postingModel.write(userIdx, userLng, userLat, date, pcontents, onlyme);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
