@@ -131,6 +131,7 @@ exports.code =
       message: "Already Friend"
     }
   },
+  //delete
   31400: {
     status: 400,
     contents: {
@@ -138,6 +139,7 @@ exports.code =
       message: "Not Friend"
     }
   },
+  //show
   32400: {
     status: 400,
     contents: {
@@ -145,6 +147,7 @@ exports.code =
       message: "No Friend"
     }
   },
+  //show list
   33400: {
     status: 400,
     contents: {
@@ -152,12 +155,119 @@ exports.code =
       message: "No Request Exists"
     }
   },
+  //add request
   34400: {
     status: 400,
     contents: {
       code: 34400,
         message: "Already sent request"
     }
-  }
+  },
 
+  // Posting API 관련 에러 코드
+  // Write
+  40400: {
+    status: 400,
+    contents: {
+      code: 40400,
+      message: "Write Posting Failed"
+    }
+  },
+  //delete/alter access denied
+  41400: {
+    status: 400,
+    contents: {
+      code: 41400,
+      message: "Access denied to the posting"
+    }
+  },
+  // delete
+  42400: {
+    status: 400,
+    contents: {
+      code: 42400,
+      message: "Delete failed"
+    }
+  },
+  //delete likes
+  43400: {
+    status: 400,
+    contents: {
+      code: 43400,
+      message: "No Likes on this posting"
+    }
+  },
+  //show
+  44400: {
+    status: 400,
+    contents: {
+      code: 44400,
+        message: "No posting exists"
+    }
+  },
+  //update
+  45400: {
+    status: 400,
+    contents: {
+      code: 45400,
+        message: "Update posting failed"
+    }
+  },
+  //like
+  46400: {
+    status: 400,
+    contents: {
+      code: 46400,
+        message: "Already likes posting"
+    }
+  },
+  47400: {
+    status: 400,
+    contents: {
+      code: 47400,
+        message: "un/likes posting failed"
+    }
+  },
+  48400: {
+    status: 400,
+    contents: {
+      code: 48400,
+        message: "change likes posting count failed"
+    }
+  },
+  49400: {
+    status: 400,
+    contents: {
+      code: 49400,
+        message: "No likes exists"
+    }
+  },
+  50400: {
+    status: 400,
+    contents: {
+      code: 50400,
+        message: "Write/Delete Reply Failed"
+    }
+  },
+  51400: {
+    status: 400,
+    contents: {
+      code: 51400,
+        message: "No Reply Exists"
+    }
+  },
+  52400: {
+    status: 400,
+    contents: {
+      code: 52400,
+        message: "Bookmark Failed"
+    }
+  },
+  53400: {
+    status: 400,
+    contents: {
+      code: 53400,
+        message: "No Bookmark Exists"
+    }
+  },
 };
