@@ -474,7 +474,6 @@ exports.dbookmark = async (req, res, next) => {
 exports.showBookmark = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const postingIdx = req.body.postingIdx || req.params.postingIdx;
   /* 1. 유효성 체크하기 */
   let isValid = true;
 
@@ -483,17 +482,13 @@ exports.showBookmark = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!postingIdx || postingIdx === null) {
-    isValid = false;
-    validationError.errors.postingIdx= { message : "postingIdx is required" };
-  }
 
   if (!isValid) return res.status(400).json(validationError);
   /* 유효성 체크 끝 */
   let result = '';
 
   try {
-    result = await postingModel.showBookmark(userIdx, postingIdx);
+    result = await postingModel.showBookmark(userIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);

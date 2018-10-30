@@ -143,6 +143,24 @@ exports.show = (postingIdx) => {
       }
     });
   });
+  // 글쓴유저 정보도 보여줘야하나본데,,
+  // .then(() => {
+  //   const sql = `SELECT users.avatar, users.nickname
+  //                 FROM users, posting
+  //                 WHERE posting.writer_idx = users.idx`;
+  //
+  //   mysql.query(sql, (err, rows) => {
+  //     if (err) {
+  //       reject(err);
+  //     } else {
+  //       if (rows.length === 0) {
+  //         reject(44400);
+  //       } else {
+  //         resolve(rows);
+  //       }
+  //     }
+  //   });
+  // });
 };
 
 /*******************
@@ -189,9 +207,9 @@ exports.show = (postingIdx) => {
      // 2. DB에서 정보 수정하기
      return new Promise((resolve, reject) => {
        const sql = `UPDATE posting
-                    SET contents = ?
-                    WHERE (writer_idx = ? AND posting_idx = ?)`;
-       mysql.query(sql, [pcontents, userIdx, postingIdx], (err, rows) => {
+                    SET contents = "?"
+                    WHERE posting_idx = ?`;
+       mysql.query(sql, [pcontents, postingIdx], (err, rows) => {
            if (err) {
              reject (err);
            } else {
@@ -427,13 +445,13 @@ exports.dbookmark = (userIdx, postingIdx) => {
  *  Show Bookmark
  *  @param: useridx, postingIdx
  ********************/
-exports.showBookmark = (userIdx, postingIdx) => {
+exports.showBookmark = (userIdx) => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
                   FROM posting_bookmark
-                  WHERE (user_idx = ? AND posting_idx = ?)`;
+                  WHERE user_idx = ?`;
 
-    mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
+    mysql.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
