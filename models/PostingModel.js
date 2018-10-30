@@ -5,12 +5,12 @@ const redis = global.utils.redis;
  *  Write
  *  @param: useridx, userLoc, date, pcontents
  ********************/
-exports.write = (userIdx, userXLoc, userYLoc, date, pcontents, onlyme) => {
+exports.write = (userIdx, userLng, userLat, date, ptitle, pcontents, onlyme) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting (writer_idx, postLat, postLng, posting_date, contents, onlyme)
-                        VALUES     (?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO posting (writer_idx, postLng, postLat, posting_date, title, contents, onlyme)
+                        VALUES     (?, ?, ?, ?, ?, ?, ?)`;
 
-    mysql.query(sql, [userIdx, userXLoc, userYLoc, date, pcontents, onlyme], (err, rows) => {
+    mysql.query(sql, [userIdx, userLng, userLat, date, ptitle, pcontents, onlyme], (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -131,7 +131,7 @@ exports.show = (postingIdx) => {
                   FROM posting
                   WHERE posting_idx = ?`;
 
-    mysql.query(sql, [postingIdx], (err, rows) => {
+    mysql.query(sql, postingIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -157,6 +157,23 @@ exports.show = (postingIdx) => {
                    WHERE (writer_idx = ? AND posting_idx = ?)`;
 
      mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
+       if (err) {
+         reject(err);
+       } else {
+         if (rows.length === 0) {
+           reject(41400);
+         } else {
+           resolve();
+         }
+       }
+     });
+   })
+   .then(() => {
+     const sql = `SELECT title, contents
+                   FROM posting
+                   WHERE posting_idx = ?`;
+
+     mysql.query(sql, postingIdx, (err, rows) => {
        if (err) {
          reject(err);
        } else {

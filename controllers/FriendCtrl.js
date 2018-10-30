@@ -11,7 +11,7 @@ let validationError = {
 
 /*******************
  *  send request
- *  @param: id
+ *  @param: idx
  *  TODO request friend
  *  TODO 친구 요청
  ********************/
@@ -62,7 +62,7 @@ exports.sendReq = async (req, res, next) => {
 exports.accReq = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
+  const senderIdx = req.body.senderIdx || req.params.senderIdx;
   /* 1. 유효성 체크하기 */
   let isValid = true;
 
@@ -71,9 +71,9 @@ exports.accReq = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!receiverIdx || receiverIdx === null) {
+  if (!senderIdx || senderIdx === null) {
     isValid = false;
-    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
+    validationError.errors.senderIdx = { message : "senderIDX is required" };
   }
 
   if (!isValid) return res.status(400).json(validationError);
@@ -81,7 +81,7 @@ exports.accReq = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.accReq(userIdx, receiverIdx);
+    result = await friendModel.accReq(userIdx, senderIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -142,7 +142,7 @@ exports.accReq = async (req, res, next) => {
 exports.delReq = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
+  const targetIdx = req.body.targetIdx || req.params.targetIdx;
   /* 유효성 체크하기 */
   let isValid = true;
 
@@ -151,9 +151,9 @@ exports.delReq = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!receiverIdx || receiverIdx === null) {
+  if (!targetIdx || targetIdx === null) {
     isValid = false;
-    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
+    validationError.errors.targetIdx = { message : "targetIDX is required" };
   }
 
   if (!isValid) return res.status(400).json(validationError);
@@ -162,7 +162,7 @@ exports.delReq = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.delReq(userIdx, receiverIdx);
+    result = await friendModel.delReq(userIdx, targetIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -224,7 +224,7 @@ exports.showReqList = async (req, res, next) => {
 exports.showWait = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
+  const targetIdx = req.body.targetIdx || req.params.targetIdx;
 
   /* 유효성 체크하기 */
   let isValid = true;
@@ -234,9 +234,9 @@ exports.showWait = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!receiverIdx || receiverIdx === null) {
+  if (!targetIdx || targetIdx === null) {
     isValid = false;
-    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
+    validationError.errors.targetIdx = { message : "targetIDX is required" };
   }
 
   if (!isValid) return res.status(400).json(validationError);
@@ -245,7 +245,7 @@ exports.showWait = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.showWait(userIdx, receiverIdx);
+    result = await friendModel.showWait(userIdx, targetIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -269,7 +269,7 @@ exports.showWait = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const receiverIdx = req.body.receiverIdx || req.params.receiverIdx;
+  const friendIdx = req.body.friendIdx || req.params.friendIdx;
   /* 유효성 체크하기 */
   let isValid = true;
 
@@ -278,9 +278,9 @@ exports.delete = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!receiverIdx || receiverIdx === null) {
+  if (!friendIdx || friendIdx === null) {
     isValid = false;
-    validationError.errors.receiverIdx = { message : "receiverIDX is required" };
+    validationError.errors.friendIdx = { message : "friendIDX is required" };
   }
 
   if (!isValid) return res.status(400).json(validationError);
@@ -289,7 +289,7 @@ exports.delete = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.delete(userIdx, receiverIdx);
+    result = await friendModel.delete(userIdx, friendIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
