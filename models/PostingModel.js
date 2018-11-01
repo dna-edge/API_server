@@ -7,7 +7,7 @@ const redis = global.utils.redis;
  ********************/
 exports.write = (userIdx, userLng, userLat, date, ptitle, pcontents, onlyme) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting (writer_idx, postLng, postLat, posting_date, title, contents, onlyme)
+    const sql = `INSERT INTO posting (writer_idx, longitude, latitude, posting_date, title, contents, onlyme)
                         VALUES     (?, ?, ?, ?, ?, ?, ?)`;
 
     mysql.query(sql, [userIdx, userLng, userLat, date, ptitle, pcontents, onlyme], (err, rows) => {
