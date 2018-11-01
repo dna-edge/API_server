@@ -5,12 +5,12 @@ const redis = global.utils.redis;
  *  Write
  *  @param: useridx, userLoc, date, pcontents
  ********************/
-exports.write = (userIdx, userLng, userLat, date, ptitle, pcontents, onlyme) => {
+exports.write = (userIdx, longitude, latitude, date, title, contents, onlyme) => {
   return new Promise((resolve, reject) => {
     const sql = `INSERT INTO posting (writer_idx, longitude, latitude, posting_date, title, contents, onlyme)
                         VALUES     (?, ?, ?, ?, ?, ?, ?)`;
 
-    mysql.query(sql, [userIdx, userLng, userLat, date, ptitle, pcontents, onlyme], (err, rows) => {
+    mysql.query(sql, [userIdx, longitude, latitude, date, title, contents, onlyme], (err, rows) => {
       if (err) {
         reject(err);
       } else {

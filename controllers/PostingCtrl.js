@@ -18,11 +18,11 @@ let validationError = {
 exports.write = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const userLng = req.body.userLng || req.params.userLng;
-  const userLat = req.body.userLat || req.params.userLat;
+  const longitude = req.body.longitude || req.params.longitude;
+  const latitude = req.body.latitude || req.params.latitude;
   const date = req.body.date || req.params.date;
-  const ptitle = req.body.ptitle || req.params.ptitle;
-  const pcontents = req.body.pcontents || req.params.pcontents;
+  const title = req.body.title || req.params.title;
+  const contents = req.body.contents || req.params.contents;
   const onlyme = req.body.onlyme || req.params.onlyme;
   /* 1. 유효성 체크하기 */
   let isValid = true;
@@ -32,24 +32,24 @@ exports.write = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!userLng|| userLng === null ) {
+  if (!longitude|| longitude === null ) {
     isValid = false;
-    validationError.errors.userLng= { message : "userLng is required" };
+    validationError.errors.longitude= { message : "Longitude is required" };
   }
 
-  if (!userLat || userLat === null ) {
+  if (!latitude || latitude === null ) {
     isValid = false;
-    validationError.errors.userLat= { message : "userLat is required" };
+    validationError.errors.latitude= { message : "Latitude is required" };
   }
 
-  if (!ptitle || ptitle === null) {
+  if (!title || title === null) {
     isValid = false;
-    validationError.errors.ptitle = { message : "ptitle is required" };
+    validationError.errors.title = { message : "title is required" };
   }
 
-  if (!pcontents || pcontents === null) {
+  if (!contents || contents === null) {
     isValid = false;
-    validationError.errors.pcontents = { message : "pconetnt is required" };
+    validationError.errors.contents = { message : "conetnt is required" };
   }
 
   if (!isValid) return res.status(400).json(validationError);
@@ -57,7 +57,7 @@ exports.write = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.write(userIdx, userLng, userLat, date, pcontents, onlyme);
+    result = await postingModel.write(userIdx, longitude, latitude, date, title, contents, onlyme);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
