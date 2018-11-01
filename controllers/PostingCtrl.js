@@ -39,7 +39,7 @@ exports.write = async (req, res, next) => {
 
   if (!userLat || userLat === null ) {
     isValid = false;
-    validationError.errors.userYLoc= { message : "userLat is required" };
+    validationError.errors.userLat= { message : "userLat is required" };
   }
 
   if (!ptitle || ptitle === null) {
