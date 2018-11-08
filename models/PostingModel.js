@@ -122,10 +122,36 @@ exports.delete = (userIdx, postingIdx) => {
 };
 
 /*******************
+ *  Show posting location
+ *  @param: postingidx
+ ********************/
+exports.showLoc = (userIdx) => {
+
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT longitude, latitude
+                  FROM posting
+                  WHERE writer_idx = ? OR onlyme = false`;
+
+    mysql.query(sql, userIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.length === 0) {
+          reject(44400);
+        } else {
+          resolve(rows);
+        }
+      }
+    });
+  });
+};
+
+/*******************
  *  Show
  *  @param: postingidx
  ********************/
 exports.show = (postingIdx) => {
+
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
                   FROM posting

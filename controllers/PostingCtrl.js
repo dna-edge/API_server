@@ -62,6 +62,7 @@ exports.write = async (req, res, next) => {
     console.log(err);
     return res.json(errorCode[err]);
   }
+
   const respond = {
     status: 201,
     message : "Write Posting Successfully",
@@ -113,6 +114,45 @@ exports.delete = async (req, res, next) => {
     result
   };
   return res.status(201).json(respond);
+};
+
+/*******************
+ *  Show posting location
+ *  @param: useridx, postingidx
+ *  TODO show posting location
+ *  TODO 포스팅 위치 조회
+ ********************/
+exports.showLoc = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+
+  /* 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+
+  let result = '';
+
+  try {
+    result = await postingModel.showLoc(userIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+
+  /* 조회 성공 시 */
+  const respond = {
+    status: 200,
+    message : "Show Posting Successfully",
+    result
+  };
+  return res.status(200).json(respond);
 };
 
 /*******************
