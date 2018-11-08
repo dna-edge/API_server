@@ -122,7 +122,7 @@ exports.delete = async (req, res, next) => {
  *  TODO show posting location
  *  TODO 포스팅 위치 조회
  ********************/
-exports.showLoc = async (req, res, next) => {
+exports.showAll = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
 
@@ -140,7 +140,7 @@ exports.showLoc = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.showLoc(userIdx);
+    result = await postingModel.showAll(userIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);

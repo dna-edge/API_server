@@ -125,10 +125,10 @@ exports.delete = (userIdx, postingIdx) => {
  *  Show posting location
  *  @param: postingidx
  ********************/
-exports.showLoc = (userIdx) => {
+exports.showAll = (userIdx) => {
 
   return new Promise((resolve, reject) => {
-    const sql = `SELECT longitude, latitude
+    const sql = `SELECT *
                   FROM posting
                   WHERE writer_idx = ? OR onlyme = false`;
 
@@ -147,7 +147,7 @@ exports.showLoc = (userIdx) => {
 };
 
 /*******************
- *  Show
+ *  Show posting(one)
  *  @param: postingidx
  ********************/
 exports.show = (postingIdx) => {

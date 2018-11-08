@@ -8,8 +8,8 @@ module.exports = (router) => {
     .delete(authCtrl.auth, postingCtrl.delete)                // 포스팅 삭제
     .put(authCtrl.auth, postingCtrl.update);                 // 포스팅 수정
 
-  router.route('/posting/showLoc/')
-    .get(authCtrl.auth, postingCtrl.showLoc);                // 포스팅 위치 조회
+  router.route('/posting/showAll/')
+    .get(authCtrl.auth, postingCtrl.showAll);                // 포스팅 위치 조회
 
   router.route('/posting/show/:postingIdx')
     .get(postingCtrl.show);                // 포스팅 조회
