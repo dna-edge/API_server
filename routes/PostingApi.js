@@ -14,7 +14,7 @@ module.exports = (router) => {
   router.route('/posting/show/:postingIdx')
     .get(postingCtrl.show);                // 포스팅 조회
 
-  router.route('/posting/like/')
+  router.route('/posting/like/:postingIdx')
     .post(authCtrl.auth, postingCtrl.like)                // 포스팅 좋아요
     .delete(authCtrl.auth, postingCtrl.unlike);              // 포스팅 좋아요취소
 
@@ -22,7 +22,7 @@ module.exports = (router) => {
     .post(authCtrl.auth, postingCtrl.reply)              // 포스팅 댓글쓰기
     .delete(authCtrl.auth, postingCtrl.dreply);              // 포스팅 댓글삭제
 
-  router.route('/posting/bookmark/')
+  router.route('/posting/bookmark/:postingIdx')
     .post(authCtrl.auth, postingCtrl.bookmark)              // 포스팅 북마크 하기
     .delete(authCtrl.auth, postingCtrl.dbookmark)              // 포스팅 북마크 취소하기
     .get(authCtrl.auth, postingCtrl.showBookmark);              // 포스팅 북마크 조회하기

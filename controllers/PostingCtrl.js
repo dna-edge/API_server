@@ -117,7 +117,7 @@ exports.delete = async (req, res, next) => {
 };
 
 /*******************
- *  Show posting location
+ *  Show Allpostings
  *  @param: useridx, postingidx
  *  TODO show posting location
  *  TODO 포스팅 위치 조회

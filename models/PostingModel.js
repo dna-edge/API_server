@@ -122,7 +122,7 @@ exports.delete = (userIdx, postingIdx) => {
 };
 
 /*******************
- *  Show posting location
+ *  Show Allpostings
  *  @param: postingidx
  ********************/
 exports.showAll = (userIdx) => {
