@@ -290,26 +290,26 @@ exports.like = (userIdx, postingIdx) => {
         }
       });
     });
+  })
+  .then(() => {
+    // 3. 공감수 수정하기
+    return new Promise((resolve, reject) => {
+      const sql = `UPDATE posting
+                   SET likes_cnt = likes_cnt+1
+                   WHERE posting_idx = ?`;
+      mysql.query(sql, postingIdx, (err, rows) => {
+          if (err) {
+            reject (err);
+          } else {
+            if (rows.affectedRows === 1) {
+              resolve(rows);
+            } else {
+              reject(48400);
+            }
+          }
+      });
+    });
   });
-  // .then(() => {
-  //   // 3. 공감수 수정하기
-  //   return new Promise((resolve, reject) => {
-  //     const sql = `UPDATE posting
-  //                  SET likes_cnt = likes_cnt+1
-  //                  WHERE posting_idx = ?`;
-  //     mysql.query(sql, postingIdx, (err, rows) => {
-  //         if (err) {
-  //           reject (err);
-  //         } else {
-  //           if (rows.affectedRows === 1) {
-  //             resolve(rows);
-  //           } else {
-  //             reject(48400);
-  //           }
-  //         }
-  //     });
-  //   });
-  // });
 };
 
 /*******************
@@ -329,30 +329,30 @@ exports.unlike = (userIdx, postingIdx) => {
         if (rows.affectedRows === 1) {
           resolve(rows);
         } else {
-          reject(47400);
+          reject(46400);
         }
       }
     });
+  })
+  .then(() => {
+    // 3. 공감수 수정하기
+    return new Promise((resolve, reject) => {
+      const sql = `UPDATE posting
+                   SET likes_cnt = likes_cnt-1
+                   WHERE posting_idx = ?`;
+      mysql.query(sql, postingIdx, (err, rows) => {
+          if (err) {
+            reject (err);
+          } else {
+            if (rows.affectedRows === 1) {
+              resolve(rows);
+            } else {
+              reject(48400);
+            }
+          }
+      });
+    });
   });
-  // .then(() => {
-  //   // 3. 공감수 수정하기
-  //   return new Promise((resolve, reject) => {
-  //     const sql = `UPDATE posting
-  //                  SET likes_cnt = likes_cnt-1
-  //                  WHERE posting_idx = ?`;
-  //     mysql.query(sql, postingIdx, (err, rows) => {
-  //         if (err) {
-  //           reject (err);
-  //         } else {
-  //           if (rows.affectedRows === 1) {
-  //             resolve(rows);
-  //           } else {
-  //             reject(48400);
-  //           }
-  //         }
-  //     });
-  //   });
-  // });
 };
 
 /*******************
