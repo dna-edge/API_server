@@ -282,10 +282,10 @@ exports.like = (userIdx, postingIdx) => {
         if (err) {
           reject(err);
         } else {
-          if (rows.affectedRows === 0) {
-            reject(47400);
-          } else {
+          if (rows.affectedRows === 1) {
             resolve(rows);
+          } else {
+            reject(47400);
           }
         }
       });
@@ -317,7 +317,7 @@ exports.like = (userIdx, postingIdx) => {
  *  @param: useridx, postingidx, plikes
  ********************/
 exports.unlike = (userIdx, postingIdx) => {
-  // 1. 공감리스트에 있는지 확인하기
+  // 1. 공감 리스트에서 삭제하기
   return new Promise((resolve, reject) => {
     const sql = `DELETE FROM posting_likes
                   WHERE (posting_idx = ? AND user_idx = ?)`;
@@ -326,10 +326,10 @@ exports.unlike = (userIdx, postingIdx) => {
       if (err) {
         reject(err);
       } else {
-        if (rows.affectedRows === 0) {
-          reject(47400);
-        } else {
+        if (rows.affectedRows === 1) {
           resolve(rows);
+        } else {
+          reject(47400);
         }
       }
     });
