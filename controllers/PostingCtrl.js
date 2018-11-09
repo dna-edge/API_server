@@ -324,7 +324,7 @@ exports.unlike = async (req, res, next) => {
 
   /* 삭제 성공 시 */
   const respond = {
-    status: 201,
+    status: 200,
     message : "Unlike posting Successfully",
     result
   };
@@ -497,7 +497,7 @@ exports.dbookmark = async (req, res, next) => {
     return res.json(errorCode[err]);
   }
   const respond = {
-    status: 201,
+    status: 200,
     message : "Delete Bookmark Successfully",
     result
   };
