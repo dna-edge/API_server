@@ -329,7 +329,8 @@ exports.unlike = (userIdx, postingIdx) => {
         if (rows.affectedRows === 1) {
           resolve(rows);
         } else {
-          reject(46400);
+          console.log("affectedRows : " + affectedRows);
+          reject(47400);
         }
       }
     });
