@@ -442,7 +442,7 @@ exports.bookmark = (userIdx, postingIdx) => {
       }
     });
   })
-  .then(())=>{
+  .then(() => {
     return new Promise((resolve, reject) => {
       const sql = `INSERT INTO posting_bookmark (posting_idx, user_idx)
                           VALUES     (?, ?)`;
