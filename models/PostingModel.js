@@ -427,19 +427,37 @@ exports.dreply = (userIdx, replyIdx) => {
  ********************/
 exports.bookmark = (userIdx, postingIdx) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting_bookmark (posting_idx, user_idx)
-                        VALUES     (?, ?)`;
+    const sql = `SELECT * FROM posting_bookmark
+                  WHERE (posting_idx = ? AND user_idx = ?)`;
 
     mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
-        if (rows.affectedRows === 1) {
-          resolve(rows);
+        if (rows.length !== 0) {
+          reject(46400);
         } else {
-          reject(52400);
+          resolve(true);
         }
       }
+    });
+  })
+  .then(())=>{
+    return new Promise((resolve, reject) => {
+      const sql = `INSERT INTO posting_bookmark (posting_idx, user_idx)
+                          VALUES     (?, ?)`;
+
+      mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (rows.affectedRows === 1) {
+            resolve(rows);
+          } else {
+            reject(52400);
+          }
+        }
+      });
     });
   });
 };
