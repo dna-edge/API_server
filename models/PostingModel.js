@@ -265,9 +265,9 @@ exports.like = (userIdx, postingIdx) => {
         reject(err);
       } else {
         if (rows.length !== 0) {
-          reject(46400);
+          reject(46400);        // 이미 공감중입니다
         } else {
-          resolve(true);
+          resolve(true);      // 공감을아직안함. 밑으로 ㄱㄱ
         }
       }
     });
@@ -290,26 +290,26 @@ exports.like = (userIdx, postingIdx) => {
         }
       });
     });
-  })
-  .then(() => {
-    // 3. 공감수 수정하기
-    return new Promise((resolve, reject) => {
-      const sql = `UPDATE posting
-                   SET likes_cnt = likes_cnt+1
-                   WHERE posting_idx = ?`;
-      mysql.query(sql, postingIdx, (err, rows) => {
-          if (err) {
-            reject (err);
-          } else {
-            if (rows.affectedRows === 1) {
-              resolve(rows);
-            } else {
-              reject(48400);
-            }
-          }
-      });
-    });
   });
+  // .then(() => {
+  //   // 3. 공감수 수정하기
+  //   return new Promise((resolve, reject) => {
+  //     const sql = `UPDATE posting
+  //                  SET likes_cnt = likes_cnt+1
+  //                  WHERE posting_idx = ?`;
+  //     mysql.query(sql, postingIdx, (err, rows) => {
+  //         if (err) {
+  //           reject (err);
+  //         } else {
+  //           if (rows.affectedRows === 1) {
+  //             resolve(rows);
+  //           } else {
+  //             reject(48400);
+  //           }
+  //         }
+  //     });
+  //   });
+  // });
 };
 
 /*******************
@@ -333,26 +333,26 @@ exports.unlike = (userIdx, postingIdx) => {
         }
       }
     });
-  })
-  .then(() => {
-    // 3. 공감수 수정하기
-    return new Promise((resolve, reject) => {
-      const sql = `UPDATE posting
-                   SET likes_cnt = likes_cnt-1
-                   WHERE posting_idx = ?`;
-      mysql.query(sql, postingIdx, (err, rows) => {
-          if (err) {
-            reject (err);
-          } else {
-            if (rows.affectedRows === 1) {
-              resolve(rows);
-            } else {
-              reject(48400);
-            }
-          }
-      });
-    });
   });
+  // .then(() => {
+  //   // 3. 공감수 수정하기
+  //   return new Promise((resolve, reject) => {
+  //     const sql = `UPDATE posting
+  //                  SET likes_cnt = likes_cnt-1
+  //                  WHERE posting_idx = ?`;
+  //     mysql.query(sql, postingIdx, (err, rows) => {
+  //         if (err) {
+  //           reject (err);
+  //         } else {
+  //           if (rows.affectedRows === 1) {
+  //             resolve(rows);
+  //           } else {
+  //             reject(48400);
+  //           }
+  //         }
+  //     });
+  //   });
+  // });
 };
 
 /*******************
