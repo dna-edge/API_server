@@ -136,6 +136,7 @@ exports.showAll = (userIdx) => {
       if (err) {
         reject(err);
       } else {
+        let comments = [];
         if (rows.length === 0) {
           reject(44400);
         } else {
@@ -164,7 +165,30 @@ exports.show = (postingIdx) => {
         if (rows.length === 0) {
           reject(44400);
         } else {
-          resolve(rows);
+          const pContents = {
+            posting_idx: rows[0].posting_idx,
+            writer_idx: rows[0].writer_idx,
+            posting_date: rows[0].posting_date,
+            title: rows[0].title,
+            contents: rows[0].contents,
+            likes_cnt: rows[0].likes_cnt,
+            latitude: rows[0].latitude,
+            longitude: rows[0].longitude,
+            onlyme: rows[0].onlyme
+          };
+
+          let pReply = [];
+
+          for(var i = 0; i<rows.length; i++){
+            pReply[i] = {
+              user_idx: rows[i].user_idx,
+              reply_idx: rows[i].reply_idx,
+              reply_contents: rows[i].reply_contents
+            }
+          }
+
+          const result = {pContents, pReply}
+          resolve(result);
         }
       }
     });
