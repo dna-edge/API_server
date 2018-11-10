@@ -154,10 +154,10 @@ exports.show = (postingIdx) => {
 
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
-                  FROM posting
-                  WHERE posting_idx = ?`;
+                  FROM posting, posting_reply
+                  WHERE (posting.posting_idx = ? AND posting_reply.posting_idx)`;
 
-    mysql.query(sql, postingIdx, (err, rows) => {
+    mysql.query(sql, [postingIdx, postingIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
