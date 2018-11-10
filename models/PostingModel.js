@@ -274,7 +274,7 @@ exports.like = (userIdx, postingIdx) => {
   })
   .then(() => {
     // 2. 공감하기
-    return new Promise((resolve, reject) => {
+    // return new Promise((resolve, reject) => {
       const sql = `INSERT INTO posting_likes(posting_idx, user_idx)
                     VALUES (?, ?)`;
 
@@ -289,7 +289,7 @@ exports.like = (userIdx, postingIdx) => {
           }
         }
       });
-    });
+    // })
   })
   .then(() => {
     // 3. 공감수 수정하기
@@ -320,16 +320,16 @@ exports.unlike = (userIdx, postingIdx) => {
   // 1. 공감 리스트에서 삭제하기
   return new Promise((resolve, reject) => {
     const sql = `DELETE FROM posting_likes
-                  WHERE (posting_idx = ? AND user_idx = ?)`;
+                  WHERE (user_idx = ? AND posting_idx = ?)`;
 
-    mysql.query(sql, [postingIdx, userIdx], (err, rows) => {
+    mysql.query(sql, [userIdx, postingIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
         if (rows.affectedRows === 1) {
           resolve(rows);
         } else {
-          console.log("affectedRows : " + affectedRows);
+          // console.log("affectedRows : " + affectedRows);
           reject(47400);
         }
       }
