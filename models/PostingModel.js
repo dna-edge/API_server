@@ -274,7 +274,7 @@ exports.like = (userIdx, postingIdx) => {
   })
   .then(() => {
     // 2. 공감하기
-    // return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const sql = `INSERT INTO posting_likes(posting_idx, user_idx)
                     VALUES (?, ?)`;
 
@@ -289,7 +289,7 @@ exports.like = (userIdx, postingIdx) => {
           }
         }
       });
-    // })
+    })
   })
   .then(() => {
     // 3. 공감수 수정하기
@@ -329,7 +329,6 @@ exports.unlike = (userIdx, postingIdx) => {
         if (rows.affectedRows === 1) {
           resolve(rows);
         } else {
-          // console.log("affectedRows : " + affectedRows);
           reject(47400);
         }
       }
