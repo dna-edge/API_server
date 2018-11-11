@@ -18,7 +18,7 @@ module.exports = (router) => {
     .post(authCtrl.auth, postingCtrl.like)                // 포스팅 좋아요
     .delete(authCtrl.auth, postingCtrl.unlike);              // 포스팅 좋아요취소
 
-  router.route('/posting/reply/')
+  router.route('/posting/reply/:postingIdx')
     .post(authCtrl.auth, postingCtrl.reply)              // 포스팅 댓글쓰기
     .delete(authCtrl.auth, postingCtrl.dreply);              // 포스팅 댓글삭제
 
