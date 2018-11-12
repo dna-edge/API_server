@@ -155,10 +155,10 @@ exports.show = (postingIdx) => {
 
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
-                  FROM posting, posting_reply
-                  WHERE (posting.posting_idx = ? AND posting_reply.posting_idx)`;
+                  FROM posting
+                  WHERE posting_idx = ?`;
 
-    mysql.query(sql, [postingIdx, postingIdx], (err, rows) => {
+    mysql.query(sql, postingIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -179,20 +179,42 @@ exports.show = (postingIdx) => {
             user_avatar: rows[0].user_avatar
           };
 
-          let pReply = [];
-
-          for(var i = 0; i<rows.length; i++){
-            pReply[i] = {
-              user_idx: rows[i].user_idx,
-              reply_idx: rows[i].reply_idx,
-              reply_contents: rows[i].reply_contents
-            }
-          }
-
-          const result = {pContents, pReply}
+          const result = {pContents}
           resolve(result);
         }
       }
+    });
+  })
+  .then((result) => {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT *
+                    FROM posting_reply
+                    WHERE posting_idx = ?`;
+
+      mysql.query(sql, postingIdx, (err, rows) => {
+        if(err){
+          reject(err);
+        } else {
+          if(rows.length !== 0){
+            let pReply = [];
+
+            for(var i = 0; i<rows.length; i++){
+              pReply[i] = {
+                user_idx: rows[i].user_idx,
+                reply_idx: rows[i].reply_idx,
+                reply_contents: rows[i].reply_contents
+              };
+
+              const result2 = {result, pReply}
+
+              resolve(result2);
+            }
+          }
+          else{
+            reject();
+          }
+        }
+      });
     });
   });
 };
