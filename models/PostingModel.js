@@ -5,12 +5,12 @@ const redis = global.utils.redis;
  *  Write
  *  @param: useridx, userLoc, date, pcontents
  ********************/
-exports.write = (userIdx, longitude, latitude, date, title, contents, onlyme) => {
+exports.write = (userIdx, userNick, userAvatar, longitude, latitude, date, title, contents, onlyme) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting (writer_idx, longitude, latitude, posting_date, title, contents, onlyme)
-                        VALUES     (?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO posting (writer_idx, user_nick, user_avatar, longitude, latitude, posting_date, title, contents, onlyme)
+                        VALUES     (?, ?, ? , ?, ?, ?, ?, ?, ?)`;
 
-    mysql.query(sql, [userIdx, longitude, latitude, date, title, contents, onlyme], (err, rows) => {
+    mysql.query(sql, [userIdx, userNick, userAvatar, longitude, latitude, date, title, contents, onlyme], (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -174,7 +174,9 @@ exports.show = (postingIdx) => {
             likes_cnt: rows[0].likes_cnt,
             latitude: rows[0].latitude,
             longitude: rows[0].longitude,
-            onlyme: rows[0].onlyme
+            onlyme: rows[0].onlyme,
+            user_nick: rows[0].user_nick,
+            user_avatar: rows[0].user_avatar
           };
 
           let pReply = [];
@@ -193,24 +195,6 @@ exports.show = (postingIdx) => {
       }
     });
   });
-  // 글쓴유저 정보도 보여줘야하나본데,,
-  // .then(() => {
-  //   const sql = `SELECT users.avatar, users.nickname
-  //                 FROM users, posting
-  //                 WHERE posting.writer_idx = users.idx`;
-  //
-  //   mysql.query(sql, (err, rows) => {
-  //     if (err) {
-  //       reject(err);
-  //     } else {
-  //       if (rows.length === 0) {
-  //         reject(44400);
-  //       } else {
-  //         resolve(rows);
-  //       }
-  //     }
-  //   });
-  // });
 };
 
 /*******************
@@ -383,12 +367,12 @@ exports.unlike = (userIdx, postingIdx) => {
  *  Reply
  *  @param: useridx, postingIdx
  ********************/
-exports.reply = (userIdx, postingIdx, rcontents) => {
+exports.reply = (userIdx, userNick, userAvatar, postingIdx, rcontents) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting_reply (posting_idx, user_idx, reply_contents)
+    const sql = `INSERT INTO posting_reply (posting_idx, user_idx, user_nick, user_avatar, reply_contents)
                         VALUES     (?, ?, ?)`;
 
-    mysql.query(sql, [postingIdx, userIdx, rcontents], (err, rows) => {
+    mysql.query(sql, [postingIdx, userIdx, userNick, userAvatar, rcontents], (err, rows) => {
       if (err) {
         reject(err);
       } else {

@@ -18,6 +18,8 @@ let validationError = {
 exports.write = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
+  const userNick = req.userData.nickname;
+  const userAvatar = req.userData.avatar;
   const longitude = req.body.longitude || req.params.longitude;
   const latitude = req.body.latitude || req.params.latitude;
   const date = req.body.date || req.params.date;
@@ -57,7 +59,7 @@ exports.write = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.write(userIdx, longitude, latitude, date, title, contents, onlyme);
+    result = await postingModel.write(userIdx, userNick, userAvatar, longitude, latitude, date, title, contents, onlyme);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
@@ -340,6 +342,8 @@ exports.unlike = async (req, res, next) => {
 exports.reply = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
+  const userNick = req.userData.nickname;
+  const userAvatar = req.userData.avatar;
   const postingIdx = req.body.postingIdx || req.params.postingIdx;
   const rcontents = req.body.rcontents || req.params.rcontents;
   /* 1. 유효성 체크하기 */
@@ -365,7 +369,7 @@ exports.reply = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.reply(userIdx, postingIdx, rcontents);
+    result = await postingModel.reply(userIdx, userNick, userAvatar, postingIdx, rcontents);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
