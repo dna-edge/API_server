@@ -179,13 +179,13 @@ exports.show = (postingIdx) => {
             user_avatar: rows[0].user_avatar
           };
 
-          const result = {pContents}
-          resolve(result);
+          // const result = pContents
+          resolve(pContents);
         }
       }
     });
   })
-  .then((result) => {
+  .then((pContents) => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT *
                     FROM posting_reply
@@ -205,7 +205,7 @@ exports.show = (postingIdx) => {
                 reply_contents: rows[i].reply_contents
               };
 
-              const result2 = {result, pReply}
+              const result2 = {pContents, pReply}
 
               resolve(result2);
             }
