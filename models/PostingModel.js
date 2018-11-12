@@ -211,7 +211,7 @@ exports.show = (postingIdx) => {
             }
           }
           else{
-            reject();
+            resolve(result);
           }
         }
       });
