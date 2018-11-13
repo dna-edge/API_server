@@ -7,7 +7,7 @@ const redis = global.utils.redis;
  ********************/
 exports.write = (userIdx, userNick, userAvatar, longitude, latitude, date, title, contents, onlyme) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting (writer_idx, user_nick, user_avatar, longitude, latitude, posting_date, title, contents, onlyme)
+    const sql = `INSERT INTO posting (writer_idx, nickname, avatar, longitude, latitude, posting_date, title, contents, onlyme)
                         VALUES     (?, ?, ? , ?, ?, ?, ?, ?, ?)`;
 
     mysql.query(sql, [userIdx, userNick, userAvatar, longitude, latitude, date, title, contents, onlyme], (err, rows) => {
@@ -175,8 +175,8 @@ exports.show = (postingIdx) => {
             latitude: rows[0].latitude,
             longitude: rows[0].longitude,
             onlyme: rows[0].onlyme,
-            user_nick: rows[0].user_nick,
-            user_avatar: rows[0].user_avatar
+            nickname: rows[0].nickname,
+            avatar: rows[0].avatar
           };
 
           // const result = pContents
@@ -391,7 +391,7 @@ exports.unlike = (userIdx, postingIdx) => {
  ********************/
 exports.reply = (userIdx, userNick, userAvatar, postingIdx, rcontents) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting_reply (posting_idx, user_idx, user_nick, user_avatar, reply_contents)
+    const sql = `INSERT INTO posting_reply (posting_idx, user_idx, nickname, avatar, reply_contents)
                         VALUES     (?, ?, ?)`;
 
     mysql.query(sql, [postingIdx, userIdx, userNick, userAvatar, rcontents], (err, rows) => {
