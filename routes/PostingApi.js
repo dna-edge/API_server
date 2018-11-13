@@ -12,7 +12,7 @@ module.exports = (router) => {
     .get(authCtrl.auth, postingCtrl.showAll);                // 포스팅 위치 조회
 
   router.route('/posting/show/:postingIdx')
-    .get(postingCtrl.show);                // 포스팅 조회
+    .get(postingCtrl.show);                                // 포스팅 조회
 
   router.route('/posting/like/:postingIdx')
     .post(authCtrl.auth, postingCtrl.like)                // 포스팅 좋아요
