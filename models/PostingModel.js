@@ -389,12 +389,12 @@ exports.unlike = (userIdx, postingIdx) => {
  *  Reply
  *  @param: useridx, postingIdx
  ********************/
-exports.reply = (userIdx, userNick, userAvatar, postingIdx, rcontents) => {
+exports.reply = (userIdx, userNick, userAvatar, rdate, postingIdx, rcontents) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO posting_reply (posting_idx, user_idx, nickname, avatar, reply_contents)
-                        VALUES     (?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO posting_reply (posting_idx, date, user_idx, nickname, avatar, reply_contents)
+                        VALUES     (?, ?, ?, ?, ?, ?)`;
 
-    mysql.query(sql, [postingIdx, userIdx, userNick, userAvatar, rcontents], (err, rows) => {
+    mysql.query(sql, [postingIdx, rdate, userIdx, userNick, userAvatar, rcontents], (err, rows) => {
       if (err) {
         reject(err);
       } else {

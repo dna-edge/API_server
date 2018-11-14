@@ -344,6 +344,7 @@ exports.reply = async (req, res, next) => {
   const userIdx = req.userData.idx;
   const userNick = req.userData.nickname;
   const userAvatar = req.userData.avatar;
+  const rdate = req.body.rdate || req.params.rdate;
   const postingIdx = req.body.postingIdx || req.params.postingIdx;
   const rcontents = req.body.rcontents || req.params.rcontents;
   /* 1. 유효성 체크하기 */
@@ -369,7 +370,7 @@ exports.reply = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.reply(userIdx, userNick, userAvatar, postingIdx, rcontents);
+    result = await postingModel.reply(userIdx, userNick, userAvatar, rdate, postingIdx, rcontents);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
