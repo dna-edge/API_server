@@ -25,6 +25,8 @@ module.exports = (router) => {
   router.route('/posting/bookmark/:postingIdx')
     .post(authCtrl.auth, postingCtrl.bookmark)              // 포스팅 북마크 하기
     .delete(authCtrl.auth, postingCtrl.dbookmark)              // 포스팅 북마크 취소하기
+
+  router.route('/posting/bookmark/')
     .get(authCtrl.auth, postingCtrl.showBookmark);              // 포스팅 북마크 조회하기
 
   return router;
