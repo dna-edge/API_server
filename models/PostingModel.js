@@ -525,8 +525,8 @@ exports.dbookmark = (userIdx, postingIdx) => {
 exports.showBookmark = (userIdx) => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
-                  FROM posting_bookmark
-                  WHERE user_idx = ?`;
+                  FROM posting, posting_bookmark
+                  WHERE posting_bookmark.user_idx = ? AND posting.posting_idx = posting_bookmark.posting_idx`;
 
     mysql.query(sql, userIdx, (err, rows) => {
       if (err) {
@@ -540,4 +540,23 @@ exports.showBookmark = (userIdx) => {
       }
     });
   });
+  // .then((rows) => {
+  //   return new Promise((resolve, reject) => {
+  //     const sql = `SELECT *
+  //                   FROM posting, posting_bookmark
+  //                   WHERE posting.posting_idx = posting`;
+  //
+  //     mysql.query(sql, [rows.posting_idx], (err, rows) => {
+  //       if (err) {
+  //         reject(err);
+  //       } else {
+  //         if (rows.affectedRows === 1) {
+  //           resolve(rows);
+  //         } else {
+  //           reject(53400);
+  //         }
+  //       }
+  //     });
+  //   });
+  // });
 };
