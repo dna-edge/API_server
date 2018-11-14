@@ -540,23 +540,28 @@ exports.showBookmark = (userIdx) => {
       }
     });
   });
-  // .then((rows) => {
-  //   return new Promise((resolve, reject) => {
-  //     const sql = `SELECT *
-  //                   FROM posting, posting_bookmark
-  //                   WHERE posting.posting_idx = posting`;
-  //
-  //     mysql.query(sql, [rows.posting_idx], (err, rows) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         if (rows.affectedRows === 1) {
-  //           resolve(rows);
-  //         } else {
-  //           reject(53400);
-  //         }
-  //       }
-  //     });
-  //   });
-  // });
+};
+
+/*******************
+ *  Show my posts
+ *  @param: useridx
+ ********************/
+exports.showMyPost = (userIdx) => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT *
+                  FROM posting
+                  WHERE writer_idx = ?`;
+
+    mysql.query(sql, userIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.length !== 0) {
+          resolve(rows);
+        } else {
+          reject(53400);
+        }
+      }
+    });
+  });
 };

@@ -539,10 +539,47 @@ exports.showBookmark = async (req, res, next) => {
     return res.json(errorCode[err]);
   }
   const respond = {
-    status: 201,
+    status: 200,
     message : "Show Bookmark Successfully",
     result
   };
-  return res.status(201).json(respond);
+  return res.status(200).json(respond);
+
+};
+
+/*******************
+ *  Show Bookmark
+ *  @param: useridx
+ *  TODO show my posts
+ *  TODO 내가쓴 포스팅 조회
+ ********************/
+exports.showMyPost = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  /* 1. 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+  let result = '';
+
+  try {
+    result = await postingModel.showBookmark(userIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+  const respond = {
+    status: 200,
+    message : "Show Bookmark Successfully",
+    result
+  };
+  return res.status(200).json(respond);
 
 };
