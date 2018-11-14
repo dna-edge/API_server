@@ -202,7 +202,10 @@ exports.show = (postingIdx) => {
               pReply[i] = {
                 user_idx: rows[i].user_idx,
                 reply_idx: rows[i].reply_idx,
-                reply_contents: rows[i].reply_contents
+                reply_contents: rows[i].reply_contents,
+                nickname: rows[i].nickname,
+                avatar: rows[i].avatar,
+                date: rows[i].date
               };
 
               const result2 = {pContents, pReply}
