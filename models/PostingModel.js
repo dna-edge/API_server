@@ -392,7 +392,7 @@ exports.unlike = (userIdx, postingIdx) => {
 exports.reply = (userIdx, userNick, userAvatar, postingIdx, rcontents) => {
   return new Promise((resolve, reject) => {
     const sql = `INSERT INTO posting_reply (posting_idx, user_idx, nickname, avatar, reply_contents)
-                        VALUES     (?, ?, ?)`;
+                        VALUES     (?, ?, ?, ?, ?)`;
 
     mysql.query(sql, [postingIdx, userIdx, userNick, userAvatar, rcontents], (err, rows) => {
       if (err) {
