@@ -302,3 +302,28 @@ exports.show = (userIdx) => {
     });
   });
 };
+
+/*******************
+ *  Search user for friend
+ *  @param: idx
+ ********************/
+exports.search = (userIdx, targetIdx) => {
+  // 1. 친구여부 확인
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT *
+                  FROM users
+                  WHERE idx = ?`;
+
+    mysql.query(sql, targetIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (rows.length === 0) {
+          reject(32400);
+        } else {
+          resolve(rows);
+        }
+      }
+    });
+  });
+};

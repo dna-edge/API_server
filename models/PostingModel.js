@@ -129,7 +129,8 @@ exports.showAll = (userIdx) => {
 
   return new Promise((resolve, reject) => {
     const sql = `SELECT posting_idx
-                  FROM posting`;
+                  FROM posting
+                  WHERE writer_idx = ? OR onlyme = false`;
 
     mysql.query(sql, userIdx, (err, rows) => {
       if (err) {

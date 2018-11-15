@@ -20,5 +20,8 @@ module.exports = (router) => {
   router.route('/friends/show')
     .get(authCtrl.auth, friendCtrl.show);                // 친구 조회
 
+  router.route('/friends/search')
+    .get(authCtrl.auth, friendCtrl.search);                // 친구 찾기
+
   return router;
 };

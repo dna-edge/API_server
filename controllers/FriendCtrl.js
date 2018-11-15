@@ -347,3 +347,48 @@ exports.show = async (req, res, next) => {
   };
   return res.status(200).json(respond);
 };
+
+/*******************
+ *  Search
+ *  @param: idx
+ *  TODO search user for friend
+ *  TODO 친구 찾기
+ ********************/
+exports.search = async (req, res, next) => {
+  /* PARAM */
+  const userIdx = req.userData.idx;
+  const targetIdx = req.body.targetIdx || req.params.targetIdx;
+
+  /* 유효성 체크하기 */
+  let isValid = true;
+
+  if (!userIdx || userIdx === null) {
+    isValid = false;
+    validationError.errors.userIdx = { message : "userIDX is required" };
+  }
+
+  if (!targetIdx || targetIdx === null) {
+    isValid = false;
+    validationError.errors.targetIdx = { message : "targetIDX is required" };
+  }
+
+  if (!isValid) return res.status(400).json(validationError);
+  /* 유효성 체크 끝 */
+
+  let result = '';
+
+  try {
+    result = await friendModel.search(userIdx, targetIdx);
+  } catch (err) {
+    console.log(err);
+    return res.json(errorCode[err]);
+  }
+
+  /* 조회 성공 시 */
+  const respond = {
+    status: 200,
+    message : "Search User Successfully",
+    result
+  };
+  return res.status(200).json(respond);
+};
