@@ -570,14 +570,14 @@ exports.showMyPost = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await postingModel.showBookmark(userIdx);
+    result = await postingModel.showMyPost(userIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
   }
   const respond = {
     status: 200,
-    message : "Show Bookmark Successfully",
+    message : "Show my posts Successfully",
     result
   };
   return res.status(200).json(respond);
