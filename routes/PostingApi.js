@@ -30,7 +30,7 @@ module.exports = (router) => {
     .get(authCtrl.auth, postingCtrl.showBookmark);              // 포스팅 북마크 조회하기
 
   router.route('/posting/showMine/')
-    .get(authCtrl.auth, postingCtrl.showBookmark);              // 내 포스팅 조회하기
+    .get(authCtrl.auth, postingCtrl.showMyPost);              // 내 포스팅 조회하기
 
   return router;
 };
