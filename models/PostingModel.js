@@ -213,7 +213,7 @@ exports.show = (postingIdx) => {
             }
           }
           else{
-            resolve(result);
+            resolve(pContents);
           }
         }
       });
