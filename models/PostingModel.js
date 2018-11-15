@@ -128,9 +128,8 @@ exports.delete = (userIdx, postingIdx) => {
 exports.showAll = (userIdx) => {
 
   return new Promise((resolve, reject) => {
-    const sql = `SELECT *
-                  FROM posting
-                  WHERE writer_idx = ? OR onlyme = false`;
+    const sql = `SELECT posting_idx
+                  FROM posting`;
 
     mysql.query(sql, userIdx, (err, rows) => {
       if (err) {
