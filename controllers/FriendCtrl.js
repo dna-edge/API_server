@@ -32,8 +32,14 @@ exports.sendReq = async (req, res, next) => {
     validationError.errors.receiverIdx = { message : "receiverIDX is required" };
   }
 
+  if(userIdx == receiverIdx) {
+    isValid = false;
+    validationError.errors.receiverIdx = { message : "userIdx is same with receiverIdx"};
+  }
+
   if (!isValid) return res.status(400).json(validationError);
   /* 유효성 체크 끝 */
+
   let result = '';
 
   try {
