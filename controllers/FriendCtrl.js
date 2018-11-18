@@ -68,6 +68,9 @@ exports.sendReq = async (req, res, next) => {
 exports.accReq = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
+  const userNick = req.userData.nickname;
+  const userAvt = req.userData.avatar;
+  const userDesc = req.userData.description;
   const senderIdx = req.body.senderIdx || req.params.senderIdx;
   /* 1. 유효성 체크하기 */
   let isValid = true;
@@ -87,7 +90,7 @@ exports.accReq = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.accReq(userIdx, senderIdx);
+    result = await friendModel.accReq(userIdx, senderIdx, userNick, userAvt, userDesc);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);

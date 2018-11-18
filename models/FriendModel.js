@@ -68,7 +68,7 @@ exports.sendReq = (userIdx, receiverIdx) => {
  *  accept friend request
  *  @param: userData = { idx }
  ********************/
-exports.accReq = (userIdx, senderIdx) => {
+exports.accReq = (userIdx, senderIdx, userNick, userAvt, userDesc) => {
   // 1. 친구 요청 확인
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
@@ -104,27 +104,27 @@ exports.accReq = (userIdx, senderIdx) => {
       });
     });
   })
+  // .then(() => {
+  // // 3. DB에 정보 삽입하기
+  //   return new Promise((resolve, reject) => {
+  //     const sql = `INSERT INTO friends (user1_idx, user2_idx)
+  //                   VALUES     (?, ?)`;
+  //     mysql.query(sql, [userIdx, senderIdx], (err, rows) => {
+  //       if (err) {
+  //         reject (err);
+  //       } else {
+  //         if (rows.affectedRows === 1) {
+  //           resolve();
+  //         } else {
+  //           reject(22500);
+  //         }
+  //       }
+  //     });
+  //   });
+  // })
   .then(() => {
-  // 3. DB에 정보 삽입하기
     return new Promise((resolve, reject) => {
-      const sql = `INSERT INTO friends (user1_idx, user2_idx)
-                    VALUES     (?, ?)`;
-      mysql.query(sql, [userIdx, senderIdx], (err, rows) => {
-        if (err) {
-          reject (err);
-        } else {
-          if (rows.affectedRows === 1) {
-            resolve();
-          } else {
-            reject(22500);
-          }
-        }
-      });
-    });
-  })
-  .then(() => {
-    return new Promise((resolve, reject) => {
-      const sql = `SELECT idx, nickname, avatar
+      const sql = `SELECT idx, nickname, avatar, description
                    FROM users
                   WHERE idx = ?`;
       mysql.query(sql, senderIdx, (err, rows) => {
@@ -135,6 +135,29 @@ exports.accReq = (userIdx, senderIdx) => {
             resolve(rows[0]);
           } else {
             reject(20400);
+          }
+        }
+      });
+    });
+  })
+  .then((rows) => {
+  // 3. DB에 정보 삽입하기
+    return new Promise((resolve, reject) => {
+      const sql = `INSERT INTO friends (user1_idx, user2_idx, user1_nick, user2_nick, user1_avt, user2_avt, user1_desc, user2_desc)
+                    VALUES     (?, ?, ?, ?, ?, ?, ?, ?)`;
+      mysql.query(sql, [userIdx, senderIdx, userNick, rows.nickname, userAvt, rows.avatar, userDesc, rows.description], (err, rows) => {
+        if (err) {
+          reject (err);
+        } else {
+          if (rows.affectedRows === 1) {
+            let result = {
+              idx: rows.user2_idx,
+              nickname: rows.user2_nickname,
+              avatar: rows.user2_avatar
+            };
+            resolve(result);
+          } else {
+            reject(22500);
           }
         }
       });
