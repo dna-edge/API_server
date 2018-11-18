@@ -68,7 +68,7 @@ exports.sendReq = (userIdx, receiverIdx) => {
  *  accept friend request
  *  @param: userData = { idx }
  ********************/
-exports.accReq = (userIdx, senderIdx, userNick, userAvt, userDesc) => {
+exports.accReq = (userIdx, senderIdx) => {
   // 1. 친구 요청 확인
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
@@ -104,47 +104,65 @@ exports.accReq = (userIdx, senderIdx, userNick, userAvt, userDesc) => {
       });
     });
   })
+  // .then(() => {
+  //   return new Promise((resolve, reject) => {
+  //     const sql = `SELECT idx, nickname, avatar, description
+  //                  FROM users
+  //                 WHERE idx = ?`;
+  //     mysql.query(sql, senderIdx, (err, rows) => {
+  //       if (err) {
+  //         reject (err);
+  //       } else {
+  //         if (rows.length > 0) {
+  //           resolve(rows[0]);
+  //         } else {
+  //           reject(20400);
+  //         }
+  //       }
+  //     });
+  //   });
+  // })
+  // .then((rows) => {
+  // // 3. DB에 정보 삽입하기
+  //   return new Promise((resolve, reject) => {
+  //     const sql = `INSERT INTO friends (user1_idx, user2_idx, user1_nick, user2_nick, user1_avt, user2_avt, user1_desc, user2_desc)
+  //                   VALUES     (?, ?, ?, ?, ?, ?, ?, ?)`;
+  //     mysql.query(sql, [userIdx, senderIdx, userNick, rows.nickname, userAvt, rows.avatar, userDesc, rows.description], (err, rows) => {
+  //       if (err) {
+  //         reject (err);
+  //       } else {
+  //         if (rows.affectedRows === 1) {
+  //           let result = {
+  //             idx: rows.user2_idx,
+  //             nickname: rows.user2_nickname,
+  //             avatar: rows.user2_avatar
+  //           };
+  //           resolve(result);
+  //         } else {
+  //           reject(22500);
+  //         }
+  //       }
+  //     });
+  //   });
+  // })
   .then(() => {
-    return new Promise((resolve, reject) => {
-      const sql = `SELECT idx, nickname, avatar, description
-                   FROM users
-                  WHERE idx = ?`;
-      mysql.query(sql, senderIdx, (err, rows) => {
-        if (err) {
-          reject (err);
-        } else {
-          if (rows.length > 0) {
-            resolve(rows[0]);
-          } else {
-            reject(20400);
-          }
-        }
-      });
-    });
-  })
-  .then((rows) => {
-  // 3. DB에 정보 삽입하기
-    return new Promise((resolve, reject) => {
-      const sql = `INSERT INTO friends (user1_idx, user2_idx, user1_nick, user2_nick, user1_avt, user2_avt, user1_desc, user2_desc)
-                    VALUES     (?, ?, ?, ?, ?, ?, ?, ?)`;
-      mysql.query(sql, [userIdx, senderIdx, userNick, rows.nickname, userAvt, rows.avatar, userDesc, rows.description], (err, rows) => {
-        if (err) {
-          reject (err);
-        } else {
-          if (rows.affectedRows === 1) {
-            let result = {
-              idx: rows.user2_idx,
-              nickname: rows.user2_nickname,
-              avatar: rows.user2_avatar
-            };
-            resolve(result);
-          } else {
-            reject(22500);
-          }
-        }
-      });
-    });
-  })
+   // 3. DB에 정보 삽입하기
+     return new Promise((resolve, reject) => {
+       const sql = `INSERT INTO friends (user1_idx, user2_idx)
+                     VALUES     (?, ?)`;
+       mysql.query(sql, [userIdx, senderIdx], (err, rows) => {
+         if (err) {
+           reject (err);
+         } else {
+           if (rows.affectedRows === 1) {
+             resolve();
+           } else {
+             reject(22500);
+           }
+         }
+       });
+     });
+   })
   .then(() => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT idx, nickname, avatar
@@ -308,11 +326,11 @@ exports.delete = (userIdx,friendIdx) => {
 exports.show = (userIdx) => {
   // 1. 친구여부 확인
   return new Promise((resolve, reject) => {
-    const sql = `SELECT *
+    const sql = `SELECT user2_idx
                   FROM friends
-                  WHERE user1_idx = ? OR user2_idx = ?`;
+                  WHERE user1_idx = ?`;
 
-    mysql.query(sql, [userIdx, userIdx], (err, rows) => {
+    mysql.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
