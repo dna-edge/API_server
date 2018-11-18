@@ -104,24 +104,6 @@ exports.accReq = (userIdx, senderIdx, userNick, userAvt, userDesc) => {
       });
     });
   })
-  // .then(() => {
-  // // 3. DB에 정보 삽입하기
-  //   return new Promise((resolve, reject) => {
-  //     const sql = `INSERT INTO friends (user1_idx, user2_idx)
-  //                   VALUES     (?, ?)`;
-  //     mysql.query(sql, [userIdx, senderIdx], (err, rows) => {
-  //       if (err) {
-  //         reject (err);
-  //       } else {
-  //         if (rows.affectedRows === 1) {
-  //           resolve();
-  //         } else {
-  //           reject(22500);
-  //         }
-  //       }
-  //     });
-  //   });
-  // })
   .then(() => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT idx, nickname, avatar, description
@@ -158,6 +140,24 @@ exports.accReq = (userIdx, senderIdx, userNick, userAvt, userDesc) => {
             resolve(result);
           } else {
             reject(22500);
+          }
+        }
+      });
+    });
+  })
+  .then(() => {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT idx, nickname, avatar
+                   FROM users
+                  WHERE idx = ?`;
+      mysql.query(sql, senderIdx, (err, rows) => {
+        if (err) {
+          reject (err);
+        } else {
+          if (rows.length > 0) {
+            resolve(rows[0]);
+          } else {
+            reject(20400);
           }
         }
       });
