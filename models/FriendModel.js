@@ -326,11 +326,11 @@ exports.delete = (userIdx,friendIdx) => {
 exports.show = (userIdx) => {
   // 1. 친구여부 확인
   return new Promise((resolve, reject) => {
-    const sql = `SELECT user2_idx
+    const sql = `SELECT *
                   FROM friends
-                  WHERE user1_idx = ?`;
+                  WHERE user1_idx = ? OR user2_idx = ?`;
 
-    mysql.query(sql, userIdx, (err, rows) => {
+    mysql.query(sql, [userIdx, userIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
