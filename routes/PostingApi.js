@@ -4,7 +4,9 @@ const postingCtrl = require('../controllers/PostingCtrl')
 
 module.exports = (router) => {
   router.route('/posting/')
-    .post(authCtrl.auth, postingCtrl.write)                  // 포스팅 글쓰기
+    .post(authCtrl.auth, postingCtrl.write);                  // 포스팅 글쓰기
+
+  router.route('/posting/:postingIdx')
     .delete(authCtrl.auth, postingCtrl.delete)                // 포스팅 삭제
     .put(authCtrl.auth, postingCtrl.update);                 // 포스팅 수정
 
