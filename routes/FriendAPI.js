@@ -11,6 +11,9 @@ module.exports = (router) => {
   router.route('/friends/showReqList')
     .get(authCtrl.auth, friendCtrl.showReqList);             // 친구 요청 조회
 
+  router.route('/friends/showSendList')
+    .get(authCtrl.auth, friendCtrl.showSendList);             // 내가 보낸 친구 요청 조회
+
   router.route('/friends/showWait/:targetIdx')
     .get(authCtrl.auth, friendCtrl.showWait);             // 친구 대기여부 조회
 

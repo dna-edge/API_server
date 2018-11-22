@@ -104,47 +104,6 @@ exports.accReq = (userIdx, senderIdx) => {
       });
     });
   })
-  // .then(() => {
-  //   return new Promise((resolve, reject) => {
-  //     const sql = `SELECT idx, nickname, avatar, description
-  //                  FROM users
-  //                 WHERE idx = ?`;
-  //     mysql.query(sql, senderIdx, (err, rows) => {
-  //       if (err) {
-  //         reject (err);
-  //       } else {
-  //         if (rows.length > 0) {
-  //           resolve(rows[0]);
-  //         } else {
-  //           reject(20400);
-  //         }
-  //       }
-  //     });
-  //   });
-  // })
-  // .then((rows) => {
-  // // 3. DB에 정보 삽입하기
-  //   return new Promise((resolve, reject) => {
-  //     const sql = `INSERT INTO friends (user1_idx, user2_idx, user1_nick, user2_nick, user1_avt, user2_avt, user1_desc, user2_desc)
-  //                   VALUES     (?, ?, ?, ?, ?, ?, ?, ?)`;
-  //     mysql.query(sql, [userIdx, senderIdx, userNick, rows.nickname, userAvt, rows.avatar, userDesc, rows.description], (err, rows) => {
-  //       if (err) {
-  //         reject (err);
-  //       } else {
-  //         if (rows.affectedRows === 1) {
-  //           let result = {
-  //             idx: rows.user2_idx,
-  //             nickname: rows.user2_nickname,
-  //             avatar: rows.user2_avatar
-  //           };
-  //           resolve(result);
-  //         } else {
-  //           reject(22500);
-  //         }
-  //       }
-  //     });
-  //   });
-  // })
   .then(() => {
    // 3. DB에 정보 삽입하기
      return new Promise((resolve, reject) => {
@@ -235,9 +194,9 @@ exports.delReq = (userIdx,targetIdx) => {
    return new Promise((resolve, reject) => {
      const sql = `SELECT *
                    FROM friend_wait
-                   WHERE sender_idx = ? OR receiver_idx = ?`;
+                   WHERE receiver_idx = ?`;
 
-     mysql.query(sql, [userIdx, userIdx], (err, rows) => {
+     mysql.query(sql, userIdx, (err, rows) => {
        if (err) {
          reject(err);
        } else {
@@ -250,6 +209,31 @@ exports.delReq = (userIdx,targetIdx) => {
      });
    });
  };
+
+ /*******************
+  *  Show send list
+  *  @param: userData = { idx }
+  ********************/
+  exports.showSendList = (userIdx) => {
+    // 1. 친구여부 확인
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT *
+                    FROM friend_wait
+                    WHERE sender_idx = ?`;
+
+      mysql.query(sql, userIdx, (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (rows.length === 0) {
+            reject(33400);
+          } else {
+            resolve(rows);
+          }
+        }
+      });
+    });
+  };
 
  /*******************
   *  show wait
