@@ -243,10 +243,11 @@ exports.delReq = (userIdx,targetIdx) => {
    // 1. 친구대기상태인지 확인
    return new Promise((resolve, reject) => {
      const sql = `SELECT *
-                   FROM friend_wait
-                   WHERE (sender_idx = ? AND receiver_idx = ?) OR (sender_idx = ? AND receiver_idx = ?)`;
+                   FROM friend_wait, friends
+                   WHERE (friend_wait.sender_idx = ? AND friend_wait.receiver_idx = ?) OR (friend_wait.sender_idx = ? AND friend_wait.receiver_idx = ?)
+                    OR (friends.user1_idx = ? AND friends.user2_idx = ?) OR (friends.user1_idx = ? AND friends.user2_idx = ?)`;
 
-     mysql.query(sql, [userIdx, targetIdx, targetIdx, userIdx], (err, rows) => {
+     mysql.query(sql, [userIdx, targetIdx, targetIdx, userIdx, userIdx, targetIdx, targetIdx, userIdx], (err, rows) => {
        if (err) {
          reject(err);
        } else {

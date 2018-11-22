@@ -17,7 +17,7 @@ module.exports = (router) => {
     .get(authCtrl.auth, friendCtrl.showSendList);             // 내가 보낸 친구 요청 조회
 
   router.route('/friends/showWait/:targetIdx')
-    .get(authCtrl.auth, friendCtrl.showWait);             // 친구 대기여부 조회
+    .get(authCtrl.auth, friendCtrl.showWait);             // 친구인지, 아니면 대기여부 조회
 
   router.route('/friends/delete/:friendIdx')
     .delete(authCtrl.auth, friendCtrl.delete);                // 친구 삭제
