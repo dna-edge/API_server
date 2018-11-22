@@ -68,13 +68,13 @@ exports.sendReq = (userIdx, receiverIdx) => {
  *  accept friend request
  *  @param: userData = { idx }
  ********************/
-exports.accReq = (userIdx, senderIdx) => {
+exports.accReq = (userIdx, targetIdx) => {
   // 1. 친구 요청 확인
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
                   FROM friend_wait
                   WHERE (receiver_idx = ? AND sender_idx = ?)`;
-    mysql.query(sql, [userIdx, senderIdx], (err, rows) => {
+    mysql.query(sql, [userIdx, targetIdx], (err, rows) => {
       if (err) {
         reject (err);
       } else {
@@ -91,7 +91,7 @@ exports.accReq = (userIdx, senderIdx) => {
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM friend_wait
                     WHERE (receiver_idx = ? AND sender_idx = ?)`;
-      mysql.query(sql, [userIdx, senderIdx], (err, rows) => {
+      mysql.query(sql, [userIdx, targetIdx], (err, rows) => {
         if (err) {
           reject (err);
         } else {
@@ -109,7 +109,7 @@ exports.accReq = (userIdx, senderIdx) => {
      return new Promise((resolve, reject) => {
        const sql = `INSERT INTO friends (user1_idx, user2_idx)
                      VALUES     (?, ?)`;
-       mysql.query(sql, [userIdx, senderIdx], (err, rows) => {
+       mysql.query(sql, [userIdx, targetIdx], (err, rows) => {
          if (err) {
            reject (err);
          } else {
@@ -127,7 +127,7 @@ exports.accReq = (userIdx, senderIdx) => {
       const sql = `SELECT idx, nickname, avatar
                    FROM users
                   WHERE idx = ?`;
-      mysql.query(sql, senderIdx, (err, rows) => {
+      mysql.query(sql, targetIdx, (err, rows) => {
         if (err) {
           reject (err);
         } else {
@@ -336,7 +336,7 @@ exports.search = (userIdx, targetIdx) => {
   // 1. 친구여부 확인
   return new Promise((resolve, reject) => {
     const sql = `SELECT *
-                  FROM users
+                  FROM friends
                   WHERE idx = ?`;
 
     mysql.query(sql, targetIdx, (err, rows) => {

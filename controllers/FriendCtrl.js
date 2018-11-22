@@ -68,7 +68,7 @@ exports.sendReq = async (req, res, next) => {
 exports.accReq = async (req, res, next) => {
   /* PARAM */
   const userIdx = req.userData.idx;
-  const senderIdx = req.body.senderIdx || req.params.senderIdx;
+  const targetIdx = req.body.targetIdx || req.params.targetIdx;
   /* 1. 유효성 체크하기 */
   let isValid = true;
 
@@ -77,9 +77,9 @@ exports.accReq = async (req, res, next) => {
     validationError.errors.userIdx = { message : "userIDX is required" };
   }
 
-  if (!senderIdx || senderIdx === null) {
+  if (!targetIdx || targetIdx === null) {
     isValid = false;
-    validationError.errors.senderIdx = { message : "senderIDX is required" };
+    validationError.errors.targetIdx = { message : "targetIDX is required" };
   }
 
   if (!isValid) return res.status(400).json(validationError);
@@ -87,7 +87,7 @@ exports.accReq = async (req, res, next) => {
   let result = '';
 
   try {
-    result = await friendModel.accReq(userIdx, senderIdx);
+    result = await friendModel.accReq(userIdx, targetIdx);
   } catch (err) {
     console.log(err);
     return res.json(errorCode[err]);
